@@ -1,0 +1,25 @@
+/* style.css */
+table th, 
+table td {
+  padding: 4px 8px !important; /* 기본값보다 작은 수치로 조정 */
+}
+
+.two-cols-header {
+  column-gap: 10px; /* Adjust the gap size as needed */
+}
+
+
+.slidev-page pre,
+.slidev-page code,
+.slidev-page pre code {
+  font-size: 0.75em !important; /* 기본보다 20% 작게 설정 */
+  line-height: 1.0 !important;            /* 줄 간격도 함께 조절하면 깔끔합니다 */
+  font-family:
+    "JetBrains Mono",
+    "Fira Code",
+    "D2Coding",
+    "Noto Sans KR",
+    monospace;
+  font-variant-ligatures: none !important;
+  font-feature-settings: "liga" 0, "calt" 0 !important;
+}

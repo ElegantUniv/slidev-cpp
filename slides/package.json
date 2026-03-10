@@ -1,9 +1,9 @@
 {
-  "name": "slides",
+  "name": "slidev-cpp",
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "slidev build",
+    "build": "slidev build --base /slidev-cpp",
     "dev": "slidev --open",
     "export": "slidev export"
   },
