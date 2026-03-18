@@ -82,7 +82,7 @@ char s1[10] = "Hello";
 //  인덱스: 0 1 2 3 4  5
 
 // 문자열 리터럴 (수정 불가)
-const char *s2 = "World";  // 읽기 전용!
+const char* s2 = "World";  // 읽기 전용!
 
 // string.h 함수들
 #include <string.h>
@@ -115,7 +115,7 @@ value:  H  e  l  l  o \0  ?   ?
                      NULL 종료자
                      (필수! 없으면 오작동)
 
-const char *s2 = "World";
+const char* s2 = "World";
 
 s2:    [0][1][2][3][4][5][6][7]
 value:  W  o  r  l  d \0  ?   ?
@@ -138,7 +138,7 @@ layout: two-cols-header
 int arr[] = {10, 20, 30, 40, 50};
 
 // 배열 이름 = 첫 번째 원소의 주소
-int *p = arr;        // == &arr[0]
+int* p = arr;        // == &arr[0]
 printf("%d\n", *p);  // 10
 
 // 포인터 산술

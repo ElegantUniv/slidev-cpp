@@ -57,7 +57,7 @@ char name[] = "홍길동";
 printf("Hello, World!\n");
 
 // 메모리 수동 관리
-int *arr = malloc(3 * sizeof(int));
+int* arr = malloc(3 * sizeof(int));
 free(arr);
 
 // 문자열 = char 배열
@@ -651,7 +651,7 @@ int main(void) {
 ### ✅ 포인터 기반 call-by-value (원본 바뀜)
 
 ```c
-void swap(int *a, int *b) {
+void swap(int* a, int* b) {
     int tmp = *a;
     *a = *b;
     *b = tmp;
@@ -681,6 +681,8 @@ layout: two-cols-header
 
 > 💡포인터(pointer)는 말 그대로 가리키는 것!
 
+<br>
+
 ::left::
 
 ### 포인터 기반 코딩
@@ -691,7 +693,7 @@ layout: two-cols-header
 int x = 42;
 
 // 포인터: 메모리 주소를 저장하는 변수
-int *p = &x;   // & = 주소 연산자
+int* p = &x;   // & = 주소 연산자
                // *p 타입: int를 가리키는 포인터
                // p에 x의 주소가 저장됨
 
@@ -709,7 +711,11 @@ printf("x = %d\n", x);  // 100 ← x가 바뀜!
 
 ::right::
 
-### 메모리 시각화
+#### 포인터 변수 선언
+```c {}
+int* p = &x; // p는 변수 x가 있는 위치(0x7fff)를 저장함. 
+             // 즉 p는 x를 가리킴.
+```
 
 ```mermaid
 block
@@ -717,7 +723,6 @@ columns 1
     block:XBLOCK
         XADDR["0x7fff"] X["42"] XVAR["x"]
     end
-    space
     block:PBLOCK
         PADDR["0x8000"] P["0x7fff"] PVAR["p"]
     end
@@ -728,18 +733,32 @@ columns 1
     classDef clean fill:none,stroke-width:0px
     class XBLOCK,XADDR,XVAR clean
     class PBLOCK,PADDR,PVAR clean
-
 ```
 
+
+#### 역참조(dereferencing)
 ```c {}
-*p = 100; // p가 가리키는 위치(0x7fff)에 저장된 값을 100으로 변경 
+*p = 100; // p가 가리키는 위치(0x7fff)에 저장된 값을 100으로 변경. 
+          // 즉 x의 값을 100으로 변경.
 ```
 
-#### 포인터 사용의 철칙
-- 이미 존재하는 것을 가리켜야 함
-- 꼭 필요한 경우가 아니면 쓰지 말 것!!!
-- 굳이 쓴다면 문법 구조를 이해하고 쓰자.
+```mermaid
+block
+columns 1
+    block:XBLOCK
+        XADDR["0x7fff"] X["100"] XVAR["x"]
+    end
+    block:PBLOCK
+        PADDR["0x8000"] P["0x7fff"] PVAR["p"]
+    end
 
+    P ----> X
+
+    %% 외곽선과 배경 제거
+    classDef clean fill:none,stroke-width:0px
+    class XBLOCK,XADDR,XVAR clean
+    class PBLOCK,PADDR,PVAR clean
+```
 
 
 ---
@@ -761,11 +780,9 @@ layout: default
 | 연산자 | 이름 | 의미 |
 |--------|------|------|
 | `&x` | 주소 연산자 | x가 저장된 메모리 주소 |
+| `int* p` | 포인터 선언 | p는 int를 가리키는 포인터 |
 | `*p` | 역참조 연산자 | p가 가리키는 주소의 값 |
-| `int *p` | 포인터 선언 | p는 int를 가리키는 포인터 |
 
-> ⚠️포인터 관련 모든 문제는 포인터 연산의 직관적이지 못한 문법 구조 때문. <br>
->> 포인터 선언과 역참조 연산자의 표현이 동일... 이것이 모든 불행의 씨앗 😖
 
 
 ---
@@ -775,29 +792,11 @@ layout: two-cols-header
 # swap 구현 다시 보기: (call-by-value)
 
 > 💡 C는 모든 것이 기본적으로 값 전달(call-by-value)입니다.
->> 참조 전달(call-by-reference)가 가능한 Python/Java/C++ 등과 달리, C는 값 전달만 가능하므로 원본을 바꾸려면 **포인터** 를 사용해야 합니다.
+>> 역참조(dereferencing) 연산자를 통해, C 언어는 값 전달(call-by-value) 방식임에도 불구하고 **포인팅하는 변수의 값**을 바꿀 수 있습니다.
 
+<br>
 
 ::left::
-
-### ❌ call-by-value (원본 안 바뀜)
-
-```c
-void swap_wrong(int a, int b) {
-    int tmp = a;
-    a = b;
-    b = tmp;
-    // 지역 복사본만 바뀜!
-}
-
-int main(void) {
-    int x = 10, y = 20;
-    swap_wrong(x, y);
-    printf("%d %d\n", x, y); // 10 20 — 그대로!
-}
-```
-
-::right::
 
 ### ✅ 포인터 기반 call-by-value (원본 바뀜)
 
@@ -816,6 +815,123 @@ int main(void) {
 }
 ```
 
+::right::
+
+```mermaid
+block
+classDef clean fill:none, stroke-width:0px
+columns 2
+    block:before_title
+        before_txt["swap() 함수 호출 전"]
+    end
+    block:after_title
+        after_txt["swap() 함수 호출 후"]
+    end
+    block:before_swap
+        before_aVAR["a"] before_a["&x"] space before_bVAR["b"] before_b["&y"]
+    end
+    block:after_swap
+        after_aVAR["a"] after_a["&x"] space after_bVAR["b"] after_b["&y"]
+    end
+    space
+    space
+    block:before_swap
+        before_aVAR["a"] before_a["&x"] space before_bVAR["b"] before_b["&y"]
+    end
+    block:after_swap
+        after_aVAR["a"] after_a["&x"] space after_bVAR["b"] after_b["&y"]
+    end
+    block:before_main
+        before_xVAR["x"] before_x["10"] space before_yVAR["y"] before_y["20"]
+    end
+    block:after_main
+        after_xVAR["x"] after_x["20"] space after_yVAR["y"] after_y["10"]
+    end
+
+    before_a ---> before_x
+    before_b ---> before_y
+    after_a ---> after_x
+    after_b ---> after_y
+
+
+    %% 외곽선과 배경 제거
+    class before_title,after_title,before_swap,after_swap,before_main,after_main clean
+    class before_aVAR,before_bVAR,after_aVAR,after_bVAR,before_xVAR,before_yVAR,after_xVAR,after_yVAR clean
+```
+
+
+
+---
+layout: two-cols-header
+---
+# 코딩 컨벤션 (Coding Convention)
+별이 다 똑같은 별이 아니라는 것을 아는데 10년이 걸렸다. (서지우, 영화 은교)
+<img src="/images/EunGyo_star.jpg" class="w-[400px] m-auto mt-4" />
+
+::left::
+
+##### 권장하는 코딩 컨벤션
+```c
+int* p; // 포인터 변수 선언
+int  a = 10;
+p = &a;
+printf("%d", *p);  // 역참조 연산
+```
+::right::
+
+##### 권장하지 않는 코딩 컨벤션
+```c
+int *p; // 포인터 변수 선언 😖
+int  a = 10;
+p = &a;
+printf("%d", *p);  // 역참조 연산
+```
+
+
+
+---
+layout: two-cols-header
+---
+
+# 코딩 컨벤션 (Coding Convention)
+
+포인터 선언과 역참조 연산자의 표현을 반드시 구분해서 쓰자!!!
+
+> ⚠️포인터 관련 모든 문제는 포인터 연산의 직관적이지 못한 문법 구조 때문. <br>
+>> 포인터 선언과 역참조 연산자의 표현을 동일하게 쓴다면... 이것이 모든 불행의 씨앗 😖
+
+<br>
+
+::left::
+
+### ✅ 포인터 기반 call-by-value (원본 바뀜)
+
+```c
+void swap(int* a, int* b) {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+    // 주소를 받아 원본 직접 수정
+}
+
+int main(void) {
+    int x = 10, y = 20;
+    swap(&x, &y);   // 주소를 넘김
+    printf("%d %d\n", x, y); // 20 10 ✅
+}
+```
+
+::right::
+
+### 코딩 규칙 (구분된 규칙)
+
+
+| 연산자 | 이름 | 의미 |
+|--------|------|------|
+| `&x` | 주소 연산자 | x가 저장된 메모리 주소 |
+| 😊`int* p` | 포인터 선언 | p는 int를 가리키는 포인터 |
+| 😖`int *p` | 포인터 선언 | p는 int를 가리키는 포인터 |
+| `*p` | 역참조 연산자 | p가 가리키는 주소의 값 |
 
 
 ---
@@ -961,51 +1077,6 @@ int main(void) {
 ### ✅ 포인터 기반 call-by-value (원본 바뀜)
 
 ```c
-void swap(int *a, int *b) {
-    int tmp = *a;
-    *a = *b;
-    *b = tmp;
-    // 주소를 받아 원본 직접 수정
-}
-
-int main(void) {
-    int x = 10, y = 20;
-    swap(&x, &y);   // 주소를 넘김
-    printf("%d %d\n", x, y); // 20 10 ✅
-}
-```
-
----
-layout: two-cols-header
----
-
-# 포인터 사용의 철칙
-
-코딩 규칙: 포인터 선언과 역참조 연산자의 표현을 구분해서 쓰자!!!
-```c
-int* p; // 포인터 변수 선언
-int  a = 10;
-p = &a;
-printf("%d", *p);  // 역참조 연산
-```
-
-::left::
-
-### 코딩 규칙 (구분된 규칙)
-
-
-| 연산자 | 이름 | 의미 |
-|--------|------|------|
-| `&x` | 주소 연산자 | x가 저장된 메모리 주소 |
-| `*p` | 역참조 연산자 | p가 가리키는 주소의 값 |
-| 😖`int *p` | 포인터 선언 | p는 int를 가리키는 포인터 |
-| 😊`int* p` | 포인터 선언 | p는 int를 가리키는 포인터 |
-
-::right::
-
-### ✅ 포인터 기반 call-by-value (원본 바뀜)
-
-```c
 void swap(int* a, int* b) {
     int tmp = *a;
     *a = *b;
@@ -1019,4 +1090,3 @@ int main(void) {
     printf("%d %d\n", x, y); // 20 10 ✅
 }
 ```
-
