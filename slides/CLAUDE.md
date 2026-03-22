@@ -42,4 +42,4 @@ Rules are defined in `.claude/rules/coding-convention.md`. Key rule: pointer dec
 
 ## Course Content
 
-Pages imported by `slides.md` in order: `about-me`, `about-TA`, `about-course`, `cpp-history`, `dev-env`, `c-intro-01`, `c-intro-02`. Add new topic files under `pages/` and register them in `slides.md` with a `src:` directive.
+Pages imported by `slides.md` in order: `about-me`, `about-TA`, `about-course`, `cpp-history`, `dev-env`, `c-intro-01`, `c-intro-02`, `c-dynamic-allocation`, `c-structure`. Add new topic files under `pages/` and register them in `slides.md` with a `src:` directive.

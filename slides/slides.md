@@ -49,3 +49,11 @@ src: ./pages/c-intro-01.md
 src: ./pages/c-intro-02.md
 ---
 
+---
+src: ./pages/c-dynamic-allocation.md
+---
+
+---
+src: ./pages/c-structure.md
+---
+
