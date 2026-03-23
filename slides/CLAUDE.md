@@ -38,8 +38,8 @@ This is a [Slidev](https://sli.dev/) presentation project for a C/C++ programmin
 
 ## Coding Conventions
 
-Rules are defined in `.claude/rules/coding-convention.md`. Key rule: pointer declarations must use `int* p;` style (type-attached), not `int *p;`. Applies to all types and function parameters. Exception: intentional bad-style examples marked with 😖 must not be changed.
+Rules are defined in `.claude/rules/coding-convention.md`. Key rules: pointer declarations must use `int* p;` style (type-attached), not `int *p;`; reference declarations must use `int& r;` style (type-attached), not `int &r;`. Both apply to all types and function parameters. Exception: intentional bad-style examples marked with 😖 must not be changed.
 
 ## Course Content
 
-Pages imported by `slides.md` in order: `about-me`, `about-TA`, `about-course`, `cpp-history`, `dev-env`, `c-intro-01`, `c-intro-02`, `c-dynamic-allocation`, `c-structure`. Add new topic files under `pages/` and register them in `slides.md` with a `src:` directive.
+Pages imported by `slides.md` in order: `about-me`, `about-TA`, `about-course`, `cpp-history`, `dev-env`, `c-intro-01`, `c-intro-02`, `c-dynamic-allocation`, `c-structure`, `cpp-class-intro`, `cpp-enum`, `cpp-reference`, `cpp-pointer`, `cpp-smart-pointer`, `cpp-std-streams`, `c-to-cpp`. Add new topic files under `pages/` and register them in `slides.md` with a `src:` directive.
