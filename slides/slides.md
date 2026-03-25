@@ -50,11 +50,19 @@ src: ./pages/c-intro-02.md
 ---
 
 ---
-src: ./pages/c-dynamic-allocation.md
+src: ./pages/c-memory.md
 ---
 
 ---
 src: ./pages/c-structure.md
+---
+
+---
+src: ./pages/c-to-cpp.md
+---
+
+---
+src: ./pages/cpp-reference.md
 ---
 
 ---
@@ -63,10 +71,6 @@ src: ./pages/cpp-class-intro.md
 
 ---
 src: ./pages/cpp-enum.md
----
-
----
-src: ./pages/cpp-reference.md
 ---
 
 ---
@@ -79,9 +83,5 @@ src: ./pages/cpp-smart-pointer.md
 
 ---
 src: ./pages/cpp-std-streams.md
----
-
----
-src: ./pages/c-to-cpp.md
 ---
 

@@ -3,7 +3,7 @@ layout: cover
 ---
 
 # C++ 프로그래밍
-## C 코드를 C++17에서 사용하기
+## C에서 C++로 넘어가기
 
 ---
 layout: default
@@ -28,7 +28,7 @@ C 언어
 └──────────────────────────────────────────────────────────────┘
 ```
 
-> "대부분"인 이유: C99/C11의 일부 기능(가변 길이 배열 등)은 C++17 표준에서 지원하지 않는다.
+> "대부분"인 이유: C99/C11의 일부 기능(가변 길이 배열 등)은 C++ 표준에서 지원하지 않는다.
 
 ```cpp
 // 이 C 코드는 C++17 컴파일러에서도 그대로 동작한다
@@ -152,50 +152,173 @@ int main() {
 layout: two-cols-header
 ---
 
-# C와 C++17의 주요 차이점
+# `std::string` — C++ 문자열
 
-같은 코드라도 C 컴파일러와 C++17 컴파일러의 동작이 다를 수 있다.
+C의 `char` 배열 대신 `std::string`을 사용하면 메모리를 자동으로 관리하고 다양한 연산을 편리하게 쓸 수 있다.
 
 ::left::
 
-## `void*` 암묵적 변환
+## 선언과 초기화
 
-```c
-// C: void*는 암묵적으로 변환됨
-int* p = malloc(sizeof(int));   // ✅ C에서는 OK
+```cpp {}
+#include <string>
 
-// C++17: 명시적 캐스팅 필요
-int* p = malloc(sizeof(int));               // ❌ 컴파일 오류
-int* p = static_cast<int*>(malloc(sizeof(int))); // ✅
+std::string s1;                  // 빈 문자열
+std::string s2 = "hello";        // 문자열 리터럴로 초기화
+std::string s3("world");         // 생성자 호출
+std::string s4(5, 'A');          // "AAAAA"
+std::string s5 = s2;             // 복사
 ```
 
+## 기본 정보 조회
 
-## `bool` 타입
+```cpp {}
+std::string s = "hello";
 
-```c
-// C99: <stdbool.h> 포함 필요
-#include <stdbool.h>
-bool flag = true;
-
-// C++17: 내장 타입, 헤더 불필요
-bool flag = true;
+s.size();     // 5  (바이트 수)
+s.length();   // 5  (size()와 동일)
+s.empty();    // false
+s[0];         // 'h'   (범위 검사 없음)
+s.at(0);      // 'h'   (범위 초과 시 예외 발생)
+s.front();    // 'h'
+s.back();     // 'o'
 ```
-
 
 ::right::
 
-## `const` 전역 변수의 링키지
+## 문자열 연산
+
+```cpp {}
+std::string a = "hello";
+std::string b = " world";
+
+// 연결
+std::string c = a + b;    // "hello world"
+a += "!";                 // a = "hello!"
+
+// 비교 (사전순)
+a == b;   // false
+a < b;    // 사전순 비교
+
+// 부분 문자열
+std::string s = "hello world";
+s.substr(6);      // "world"   (6번째부터 끝까지)
+s.substr(0, 5);   // "hello"   (0번째부터 5글자)
+
+// 검색
+s.find("world");        // 6  (위치 반환)
+s.find("xyz");          // std::string::npos  (못 찾음)
+s.contains("hello");    // true  (C++23)
+```
+
+
+---
+layout: two-cols-header
+---
+
+# `char` 배열 vs `std::string`
+
+::left::
+
+## C 스타일 — `char` 배열
 
 ```c
-// C: const 전역은 external linkage (기본)
-const int MAX = 100;   // 다른 파일에서 접근 가능
+#include <string.h>
+#include <stdio.h>
 
-// C++17: const 전역은 internal linkage (기본)
-const int MAX = 100;   // 이 파일 내에서만 유효
+char s[32] = "hello";
 
-// C++17: 헤더에서 여러 파일에 공유하려면
-inline constexpr int MAX = 100;  // ✅ 중복 정의 없음
+// 연결 — 버퍼 크기 직접 관리
+strncat(s, " world", sizeof(s) - strlen(s) - 1);
+
+// 비교
+if (strcmp(s, "hello world") == 0) { ... }
+
+// 길이
+size_t len = strlen(s);   // O(n)
+
+// 복사 — 크기 초과 시 버퍼 오버플로
+strncpy(s, "new text", sizeof(s) - 1);
 ```
+
+::right::
+
+## C++ 스타일 — `std::string`
+
+```cpp
+#include <string>
+
+std::string s = "hello";
+
+// 연결 — 크기 자동 관리
+s += " world";
+
+// 비교 — 연산자로 직관적
+if (s == "hello world") { ... }
+
+// 길이
+size_t len = s.size();    // O(1)
+
+// 복사 — 안전
+s = "new text";
+```
+
+
+
+---
+layout: two-cols-header
+---
+
+# `std::string` — 수정과 변환
+C 함수(`printf`, `fopen` 등)에 `std::string`을 넘길 때는 반드시 `.c_str()`을 호출한다.
+
+
+::left::
+
+## 문자열 수정
+
+```cpp {}
+std::string s = "hello";
+
+// 이어 붙이기
+s.append(" world");        // "hello world"
+s.push_back('!');          // "hello world!"
+
+// 삽입 / 삭제
+s.insert(5, ",");          // "hello, world!"
+s.erase(5, 1);             // "hello world!"  (5번째 1글자 삭제)
+
+// 교체
+s.replace(6, 5, "C++");   // "hello C++!"
+
+// 초기화
+s.clear();    // 빈 문자열로
+```
+
+::right::
+
+## C 문자열과의 변환
+
+```cpp {}
+#include <string>
+#include <cstdio>
+
+std::string s = "hello";
+
+// std::string → const char*  (C 함수에 넘길 때)
+std::printf("%s\n", s.c_str());
+
+// const char* → std::string  (자동 변환)
+const char* cs = "world";
+std::string s2 = cs;           // 복사됨
+
+// 숫자 ↔ 문자열
+std::string ns = std::to_string(42);   // "42"
+int n = std::stoi("123");              // 123
+double d = std::stod("3.14");          // 3.14
+```
+
+
 
 ---
 layout: two-cols-header
@@ -258,6 +381,56 @@ int main() {
 ```
 
 > `string_view`는 **복사 없는 읽기 전용 뷰**다. 원본이 살아 있는 동안에만 유효하다.
+
+---
+layout: two-cols-header
+---
+
+# C와 C++의 주요 차이점
+
+같은 코드라도 C 컴파일러와 C++17 컴파일러의 동작이 다를 수 있다.
+
+::left::
+
+## `void*` 암묵적 변환
+
+```c
+// C: void*는 암묵적으로 변환됨
+int* p = malloc(sizeof(int));   // ✅ C에서는 OK
+
+// C++17: 명시적 캐스팅 필요
+int* p = malloc(sizeof(int));               // ❌ 컴파일 오류
+int* p = static_cast<int*>(malloc(sizeof(int))); // ✅
+```
+
+
+## `bool` 타입
+
+```c
+// C99: <stdbool.h> 포함 필요
+#include <stdbool.h>
+bool flag = true;
+
+// C++17: 내장 타입, 헤더 불필요
+bool flag = true;
+```
+
+
+::right::
+
+## `const` 전역 변수의 링키지
+
+```c
+// C: const 전역은 external linkage (기본)
+const int MAX = 100;   // 다른 파일에서 접근 가능
+
+// C++17: const 전역은 internal linkage (기본)
+const int MAX = 100;   // 이 파일 내에서만 유효
+
+// C++17: 헤더에서 여러 파일에 공유하려면
+inline constexpr int MAX = 100;  // ✅ 중복 정의 없음
+```
+
 
 
 ---
@@ -343,4 +516,5 @@ layout: default
 | 동적 할당 | `malloc` / `free` | `make_unique` / `make_shared` |
 | 타입 캐스팅 | `(int)x` | `static_cast<int>(x)` |
 | `void*` 변환 | 암묵적 | `static_cast<T*>` 명시 필요 |
+| 문자열 소유·수정 | `char[]` + `strcpy` | `std::string` |
 | 읽기 전용 문자열 파라미터 | `const char*` | `std::string_view` |

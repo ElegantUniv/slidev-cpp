@@ -42,4 +42,4 @@ Rules are defined in `.claude/rules/coding-convention.md`. Key rules: pointer de
 
 ## Course Content
 
-Pages imported by `slides.md` in order: `about-me`, `about-TA`, `about-course`, `cpp-history`, `dev-env`, `c-intro-01`, `c-intro-02`, `c-dynamic-allocation`, `c-structure`, `cpp-class-intro`, `cpp-enum`, `cpp-reference`, `cpp-pointer`, `cpp-smart-pointer`, `cpp-std-streams`, `c-to-cpp`. Add new topic files under `pages/` and register them in `slides.md` with a `src:` directive.
+Pages imported by `slides.md` in order: `about-me`, `about-TA`, `about-course`, `cpp-history`, `dev-env`, `c-intro-01`, `c-intro-02`, `c-memory`, `c-structure`, `c-to-cpp`, `cpp-reference`, `cpp-class-intro`, `cpp-enum`, `cpp-pointer`, `cpp-smart-pointer`, `cpp-std-streams`. Add new topic files under `pages/` and register them in `slides.md` with a `src:` directive.
