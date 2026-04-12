@@ -21,7 +21,7 @@ This is a [Slidev](https://sli.dev/) presentation project for a C/C++ programmin
 
 **Custom components**: Vue components in `components/` are auto-imported and usable directly in any slide's markdown (e.g., `<Counter />`).
 
-**Code snippets**: TypeScript files in `snippets/` can be imported into slides using Slidev's `<<< @/snippets/file.ts#region` syntax for code blocks.
+**Code snippets**: Source files in `snippets/` are organized into topic subfolders (`snippets/<topic>/`) and imported into slides using Slidev's `<<< @/snippets/<topic>/file.ext lang` syntax (e.g., `<<< @/snippets/c-memory/malloc_basic.c c`). Each snippet is a self-contained C/C++ source file. When creating a new topic page, create a matching `snippets/<topic>/` folder and extract code blocks there rather than inlining them.
 
 **Styling**: Uses UnoCSS (configured via `css: unocss` in headmatter). Utility classes are used directly in Vue template attributes.
 
@@ -42,4 +42,4 @@ Rules are defined in `.claude/rules/coding-convention.md`. Key rules: pointer de
 
 ## Course Content
 
-Pages imported by `slides.md` in order: `about-me`, `about-TA`, `about-course`, `cpp-history`, `dev-env`, `c-intro-01`, `c-intro-02`, `c-memory`, `c-structure`, `c-to-cpp`, `cpp-reference`, `cpp-class-intro`, `cpp-enum`, `cpp-pointer`, `cpp-smart-pointer`, `cpp-std-streams`. Add new topic files under `pages/` and register them in `slides.md` with a `src:` directive.
+Pages imported by `slides.md` in order: `about-me`, `about-TA`, `about-course`, `cpp-history`, `dev-env`, `c-intro-01`, `c-intro-02`, `c-memory`, `c-structure`, `c-to-cpp`, `cpp-reference`, `cpp-class-intro`, `cpp-enum`, `cpp-pointer`, `cpp-smart-pointer`, `std-streams`, `io-buffers`. Add new topic files under `pages/` and register them in `slides.md` with a `src:` directive.

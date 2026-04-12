@@ -82,6 +82,10 @@ src: ./pages/cpp-smart-pointer.md
 ---
 
 ---
-src: ./pages/cpp-std-streams.md
+src: ./pages/std-streams.md
+---
+
+---
+src: ./pages/io-buffers.md
 ---
 
