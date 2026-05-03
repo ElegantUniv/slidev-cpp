@@ -232,7 +232,7 @@ int main() {
 
 ## 실행 결과
 
-```
+```txt
 Base 생성
 Derived 생성
 Derived 소멸
@@ -241,7 +241,7 @@ Base 소멸
 
 <br>
 
-```
+```txt
 생성: Base → Derived  (기반 먼저)
 소멸: Derived → Base  (역순)
 ```
