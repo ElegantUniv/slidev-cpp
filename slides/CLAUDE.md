@@ -29,7 +29,7 @@ This is a [Slidev](https://sli.dev/) presentation project for a C/C++ programmin
 
 ## Slide Authoring Conventions
 
-- `layout: two-cols` with `::right::` separator for two-column layouts
+- `layout: two-cols` with `::right::` separator for two-column layouts (no shared header)
 - `layout: two-cols-header` with `::left::` / `::right::` separators when a full-width header row is needed above the columns
 - `layout: section` for chapter/topic dividers; `layout: cover` for chapter title slides within page files
 - Images are stored in `images/` and referenced as `/images/<filename>` (absolute path from public root)
@@ -42,4 +42,26 @@ Rules are defined in `.claude/rules/coding-convention.md`. Key rules: pointer de
 
 ## Course Content
 
-Pages imported by `slides.md` in order: `about-me`, `about-TA`, `about-course`, `cpp-history`, `dev-env`, `c-intro-01`, `c-intro-02`, `c-memory`, `c-structure`, `c-to-cpp`, `cpp-reference`, `cpp-class-intro`, `cpp-enum`, `cpp-pointer`, `cpp-smart-pointer`, `std-streams`, `io-buffers`. Add new topic files under `pages/` and register them in `slides.md` with a `src:` directive.
+Pages imported by `slides.md` in order:
+
+| 파일 | 주제 |
+|------|------|
+| `about-me`, `about-TA`, `about-course` | 강의 소개 |
+| `cpp-history` | C++ 역사 |
+| `dev-env` | 개발 환경 |
+| `c-intro-01`, `c-intro-02` | C 기초 |
+| `c-memory` | 동적 메모리 |
+| `c-structure` | 구조체 |
+| `c-to-cpp` | C → C++ 전환 |
+| `cpp-reference` | 참조 |
+| `cpp-class-intro` | 클래스 기초 |
+| `cpp-enum` | 열거형 |
+| `cpp-pointer` | 포인터 |
+| `cpp-smart-pointer` | 스마트 포인터 |
+| `std-streams` | 표준 스트림 |
+| `io-buffers` | I/O 버퍼 |
+| `cpp-class-advanced` | 특수 멤버 함수, 연산자 오버로딩 |
+| `inheritance` | 상속 |
+| `polymorphism` | 다형성, virtual 함수 |
+
+새 주제 파일은 `pages/`에 추가하고 `slides.md`에 `src:` 항목을 등록한다. 코드가 긴 예제는 `snippets/<topic>/` 폴더에 별도 파일로 분리하고 `<<< @/snippets/<topic>/file.ext lang` 구문으로 임포트한다. 현재 스니펫 폴더: `c-memory`, `c-structure`, `std-streams`, `io-buffers`, `cpp-class`.
