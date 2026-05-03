@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python *)",
+      "Bash(grep -A3 '\\\\\\\\section\\\\*' midterm/latex/*.tex)",
+      "Bash(clang-format --version)",
+      "Bash(pip show *)",
+      "Bash(where clang-format *)",
+      "Bash(pip install *)",
+      "Bash(python3 -c ' *)",
+      "PowerShell(& \"C:\\\\dev\\\\source\\\\repos\\\\slidev-cpp\\\\slides\\\\op_test.exe\")"
+    ]
+  }
+}

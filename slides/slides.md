@@ -89,3 +89,14 @@ src: ./pages/std-streams.md
 src: ./pages/io-buffers.md
 ---
 
+---
+src: ./pages/cpp-class-advanced.md
+---
+
+---
+src: ./pages/inheritance.md
+---
+
+---
+src: ./pages/polymorphism.md
+---
