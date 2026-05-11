@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /tmp)",
+      "Bash(./q21_test)",
+      "Bash(grep -l \"\\\\\\\\\\\\\\\\begin{verbatim}\" /d/dev/source/repos/slidev/slidev-cpp/slides/midterm/latex/q*.tex)",
+      "Bash(perl -i -pe 's/\\\\\\\\begin\\\\{verbatim\\\\}/\\\\\\\\begin{Verbatim}[frame=single]/g; s/\\\\\\\\end\\\\{verbatim\\\\}/\\\\\\\\end{Verbatim}/g' /d/dev/source/repos/slidev/slidev-cpp/slides/midterm/latex/answer/q*.tex)",
+      "Bash(xxd /d/dev/source/repos/slidev/slidev-cpp/slides/midterm/latex/answer/q01.tex)",
+      "Bash(python3 *)",
+      "Bash(python *)",
+      "Bash(grep *)",
+      "Bash(pip install *)",
+      "Bash(py --version)"
+    ]
+  }
+}

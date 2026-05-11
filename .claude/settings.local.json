@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"D:\\\\dev\\\\source\\\\repos\\\\slidev\\\\slidev-cpp\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "PowerShell(ls -Recurse -Depth 2 \"D:\\\\dev\\\\source\\\\repos\\\\slidev\\\\slidev-cpp\" | Where-Object { $_.PSIsContainer } | Select-Object FullName)",
+      "PowerShell(Get-ChildItem -Path \"D:\\\\dev\\\\source\\\\repos\\\\slidev\\\\slidev-cpp\\\\slides\\\\pages\" 2>$null | Select-Object Name, @{Name=\"Size\";Expression={$_.Length}})",
+      "PowerShell(Get-ChildItem -Path \"D:\\\\dev\\\\source\\\\repos\\\\slidev\\\\slidev-cpp\\\\slides\\\\snippets\" -Recurse 2>$null | Where-Object { !$_.PSIsContainer } | Select-Object FullName)",
+      "Bash(Move-Item \"D:\\\\dev\\\\source\\\\repos\\\\slidev\\\\slidev-cpp\\\\hw\\\\hw-operator.md\" \"D:\\\\dev\\\\source\\\\repos\\\\slidev\\\\slidev-cpp\\\\assignments\\\\hw-operator.md\")",
+      "Bash(Remove-Item \"D:\\\\dev\\\\source\\\\repos\\\\slidev\\\\slidev-cpp\\\\hw\" -Recurse)",
+      "Bash(g++ -std=c++17 -o fraction fraction.cpp)",
+      "Bash(./fraction)",
+      "Bash(python fraction.py)"
+    ]
+  }
+}

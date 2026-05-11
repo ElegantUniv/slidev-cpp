@@ -3,7 +3,97 @@ layout: cover
 ---
 
 # C++ 프로그래밍
-## 생성자 오버로딩, 연산자 오버로딩
+## 함수 오버로딩, 생성자 오버로딩, 연산자 오버로딩
+
+---
+layout: two-cols-header
+---
+
+# 함수 시그니처 (Function Signature)
+
+컴파일러는 **함수 시그니처**로 함수를 식별한다. 시그니처는 함수 이름과 매개변수 목록으로 구성된다.
+
+::left::
+
+## 시그니처를 구성하는 것
+
+- **함수 이름**
+- **매개변수의 개수**
+- **매개변수의 타입**
+- **매개변수의 순서**
+
+```cpp {}
+void print(int n);
+void print(double x);
+void print(int n, double x);
+void print(double x, int n);
+```
+
+위 네 함수는 시그니처가 모두 다르다.
+
+::right::
+
+## 시그니처에 포함되지 않는 것
+
+- **반환형** — 반환형만 다른 함수는 동일한 시그니처
+
+```cpp {}
+int  getValue();   // ❌
+double getValue(); // ❌ 시그니처 충돌 — 컴파일 오류
+```
+
+- **매개변수 이름** — 이름은 식별에 사용되지 않음
+
+```cpp {}
+void move(int x, int y);  // 시그니처:
+void move(int a, int b);  // move(int, int) — 동일
+```
+
+> 컴파일러는 호출 시 **인수의 타입과 개수**를 보고
+> 어떤 함수를 호출할지 결정한다.
+
+---
+layout: default
+---
+
+# 함수 오버로딩 (Function Overloading)
+
+**같은 이름**의 함수를 매개변수 구성이 다르게 여러 개 정의하는 것.
+컴파일러가 호출 시점에 인수 타입·개수로 어떤 함수를 호출할지 결정한다 (오버로드 해석).
+
+```cpp {}
+#include <cstdio>
+
+void print(int n)         { printf("int: %d\n", n); }
+void print(double x)      { printf("double: %.2f\n", x); }
+void print(const char* s) { printf("string: %s\n", s); }
+void print(int n, int m)  { printf("two ints: %d, %d\n", n, m); }
+
+int main() {
+    print(42);         // print(int)          → int: 42
+    print(3.14);       // print(double)        → double: 3.14
+    print("hello");    // print(const char*)   → string: hello
+    print(1, 2);       // print(int, int)      → two ints: 1, 2
+}
+```
+
+<br>
+
+| 조건 | 오버로딩 가능? |
+|------|--------------|
+| 매개변수 **개수** 다름 | ✅ |
+| 매개변수 **타입** 다름 | ✅ |
+| 매개변수 **순서** 다름 | ✅ |
+| **반환형**만 다름 | ❌ 컴파일 오류 |
+
+
+---
+layout: section
+---
+
+# 생성자 오버로딩
+## 복사 생성자, 복사 대입 연산자 
+
 
 ---
 layout: default
@@ -86,17 +176,17 @@ layout: two-cols-header
 ```cpp {}
 class Vector {
 public:
-    int* data;
-    int  size;
+    double* data;
+    int     size;
     Vector(int n) : size(n) {
-        data = new int[n]();
+        data = new double[n]();
     }
     ~Vector() { delete[] data; }
     // 복사 생성자/대입 없음 → 포인터만 복사됨
 };
 
 Vector a(3);
-a.data[0] = 10;
+a.data[0] = 1.5;
 Vector b = a;       // ⚠️ data 포인터만 복사
 // a.data == b.data (같은 메모리 참조)
 // 소멸 시 같은 메모리를 두 번 delete → 크래시!
@@ -109,23 +199,23 @@ Vector b = a;       // ⚠️ data 포인터만 복사
 ```cpp {}
 class Vector {
 public:
-    int* data;
-    int  size;
+    double* data;
+    int     size;
     // ...생성자/소멸자 동일...
-
-    // 복사 생성자 — 새 메모리 할당 후 복사
-    Vector(const Vector& other) : size(other.size) {
-        data = new int[size];
-        memcpy(data, other.data, size * sizeof(int));
+    
+    // 복사 생성자 — operator=45 에 위임
+    // data를 nullptr로 초기화 필수:  미초기화 포인터에 delete[] 하면 UB
+    Vector(const Vector& other) : size(0), data(nullptr) {
+        *this = other;
     }
 
-    // 복사 대입 연산자
+    // 복사 대입 연산자 — 깊은 복사 로직은 여기에만
     Vector& operator=(const Vector& other) {
         if (this == &other) return *this; // 자기 대입 방지
-        delete[] data;
+        delete[] data;                    // nullptr도 안전한 no-op
         size = other.size;
-        data = new int[size];
-        memcpy(data, other.data, size * sizeof(int));
+        data = new double[size];
+        memcpy(data, other.data, size * sizeof(double));
         return *this;
     }
 };
@@ -148,9 +238,13 @@ static 멤버는 **클래스 자체에 속하는** 멤버로, 모든 인스턴�
 ```cpp {}
 class Counter {
 public:
-    static int count;   // 클래스 안에서는 선언만
+    static int count;  // 클래스 안에서는 선언만
+    int        id;     // 인스턴스마다 별도로 존재
 
-    Counter()  { ++count; }
+    Counter() {
+        ++count;       // static — 모든 인스턴스가 공유
+        id = count;    // non-static — 이 인스턴스의 고유 번호
+    }
     ~Counter() { --count; }
 };
 
@@ -158,9 +252,9 @@ public:
 int Counter::count = 0;
 
 int main() {
-    printf("%d\n", Counter::count); // 0
     Counter a, b;
-    printf("%d\n", Counter::count); // 2
+    printf("%d %d\n", a.id, b.id);   // 1 2
+    printf("%d\n", Counter::count);   // 2
 }
 ```
 
@@ -172,22 +266,27 @@ int main() {
 class Counter {
 public:
     static int count;
+    int        id;
 
-    Counter()  { ++count; }
+    Counter() { ++count; id = count; }
     ~Counter() { --count; }
-    // this가 없음 → 비-static 멤버 접근 불가
-    static int get() { return count; }
+
+    static int get() {
+        return count;  // ✅ static 멤버 접근 가능
+        // return id;  // ❌ this 없음 → non-static 접근 불가
+    }
 };
 int Counter::count = 0;
 
 int main() {
     Counter a, b;
-    // 클래스명으로 직접 호출 (객체 불필요)
-    printf("%d\n", Counter::get()); // 2
+    printf("id: %d %d\n", a.id, b.id);  // id: 1 2
+    printf("count: %d\n", Counter::get()); // count: 2
 }
 ```
 
-> `static` 함수는 `this`가 없으므로 **static 멤버에만 접근**할 수 있다.
+> 생성자·소멸자는 `this`가 있으므로 static·non-static 모두 접근 가능.<br>
+> `static` 함수는 `this`가 없으므로 **static 멤버에만** 접근할 수 있다.
 
 ---
 layout: two-cols-header
@@ -466,7 +565,6 @@ std::cout << c * 2.0 << "\n";  // 6 + 8i
 std::cout << 2.0 * c << "\n";  // 6 + 8i
 ```
 
-
 ---
 layout: two-cols-header
 ---
@@ -590,6 +688,22 @@ std::ostream& operator<<(std::ostream& os,
 
 
 ---
+layout: default
+---
+
+# 연산자 오버로딩 — 멤버 vs 전역
+
+| 구분 | 해당 연산자 | 이유 |
+|------|------------|------|
+| **반드시 멤버 함수** | `=` `[]` `()` `->` | 표준이 멤버 함수로 명시 |
+| **사실상 전역 함수** | `<<` `>>` | 왼쪽 피연산자가 `ostream`/`istream` — 수정 불가한 외부 클래스 |
+| **멤버 또는 전역 모두 가능** | `+` `-` `*` `/` `==` `!=` `<` `>` `+=` 등 | 선택 가능; 대칭 연산이면 전역 권장 |
+
+<br>
+
+> **전역 함수만 가능**한 연산자는 C++에 없다. `<<`/`>>`는 기술적으로 멤버로도 정의할 수 있지만, 왼쪽 피연산자인 `ostream`을 수정할 수 없으므로 사실상 전역으로 구현해야 한다.
+
+---
 layout: section
 ---
 
@@ -609,17 +723,17 @@ layout: two-cols-header
 
 ```cpp {}
 class Vector {
-    int* data;
-    int  size;
+    double* data;
+    int     size;
 public:
-    Vector(int n) : size(n) { data = new int[n](); }
+    Vector(int n) : size(n) { data = new double[n](); }
     ~Vector() { delete[] data; }
 
-    // 비-const 객체: int& 반환 → 쓰기 가능
-    int& operator[](int i) { return data[i]; }
+    // 비-const 객체: double& 반환 → 쓰기 가능
+    double& operator[](int i) { return data[i]; }
 
     // const 객체: 값 반환 → 읽기 전용
-    int  operator[](int i) const { return data[i]; }
+    double  operator[](int i) const { return data[i]; }
 };
 ```
 
@@ -630,15 +744,15 @@ public:
 ```cpp {}
 Vector v(3);
 
-v[0] = 10;             // 쓰기 — int& 반환이므로 대입 가능
-v[1] = 20;
-v[2] = 30;
+v[0] = 1.414;             // 쓰기 — double& 반환이므로 대입 가능
+v[1] = 20.0;
+v[2] = 3.14;
 
-printf("%d\n", v[0]);  // 읽기 → 10
+printf("%lf\n", v[0]);  // 읽기 → 1.414
 
 const Vector& cv = v;   // 참조로 const 접근 — 복사 없음
-printf("%d\n", cv[1]); // const 버전 호출 → 20
-// cv[0] = 99;         // ❌ int 반환 — 대입 불가
+printf("%lf\n", cv[1]); // const 버전 호출 → 20.0
+// cv[0] = 99.9;        // ❌ double 반환 — 대입 불가
 ```
 
 <br>
@@ -700,6 +814,82 @@ printf("%.0f\n", S(0, 0)); // 1  (변경 확인)
 ```
 
 > `operator()`는 인수 시그니처를 다르게 해 **오버로딩**할 수 있다. `Matrix2D`는 `(int,int)`로 원소 접근
+
+---
+layout: two-cols-header
+---
+
+# `operator()` — 1D 배열로 2D 행렬 구현
+
+**`double m[4]`** 로 저장해서 행 우선(row-major)이나 열 우선(column-major) 순서로 메모리에 연속 배치할 수도 있다.
+
+::left::
+
+#### 행 우선(row-major) 구현
+```cpp {}
+class Matrix2D {
+    double m[4];  // [0]=a [1]=b [2]=c [3]=d
+                  // row-major: m[i*2 + j]
+public:
+    Matrix2D(double a, double b, double c, double d) {
+        m[0] = a; m[1] = b;  m[2] = c; m[3] = d;
+    }
+
+    // (i,j) → i*2 + j 로 1D 인덱스 변환
+    double& operator()(int i, int j) {
+        return m[i * 2 + j];
+    }
+    double operator()(int i, int j) const {
+        return m[i * 2 + j];
+    }
+};
+```
+###### 메모리 배치
+
+```txt {}
+인덱스:  [0]  [1]  [2]  [3]
+값:       a    b    c    d
+
+행렬로 보면:
+  (0,0)=a  (0,1)=b
+  (1,0)=c  (1,1)=d
+
+(i, j) → m[i*2 + j]
+```
+
+
+::right::
+
+#### 열 우선(column-major) 구현
+```cpp {}
+class Matrix2D {
+    double m[4];  // [0]=a [1]=c [2]=b [3]=d
+                  // column-major: m[i + j*2]
+public:
+    Matrix2D(double a, double b, double c, double d) {
+        m[0] = a; m[1] = c; m[2] = b; m[3] = d;
+    }
+
+    // (i,j) → i + j*2 로 1D 인덱스 변환
+    double& operator()(int i, int j) {
+        return m[i + j * 2];
+    }
+    double operator()(int i, int j) const {
+        return m[i + j * 2];
+    }
+};
+```
+###### 메모리 배치
+```txt {}
+인덱스:  [0]  [1]  [2]  [3]
+값:       a    c    b    d
+
+행렬로 보면:
+  (0,0)=a  (0,1)=b
+  (1,0)=c  (1,1)=d
+
+(i, j) → m[i + j*2]
+```
 
 ---
 layout: two-cols-header
@@ -779,6 +969,7 @@ layout: default
 
 | 개념 | 키워드 / 문법 | 핵심 |
 |------|--------------|------|
+| **함수 오버로딩** | 동일 이름, 다른 매개변수 | 시그니처(이름+매개변수)로 함수 구별; 반환형 제외 |
 | **생성자 오버로딩** | `T()`, `T(int)`, `T(const T&)` | 매개변수 구성이 다른 여러 생성자 정의 |
 | **복사 생성자** | `T(const T&)` | 깊은 복사; 동적 메모리 있으면 직접 구현 |
 | **복사 대입 연산자** | `T& operator=(const T&)` | 자기 대입 방지 + 기존 자원 해제 후 복사 |
