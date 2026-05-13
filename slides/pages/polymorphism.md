@@ -148,7 +148,7 @@ layout: two-cols-header
 
 ::left::
 
-### 다형성을 활용한 클래스 선언
+### 다형성을 활용한 클래스 함수
 
 ```cpp {}
 #include <cstdio>
@@ -273,11 +273,12 @@ public:
     double perimeter() const override { return 2 * (w + h); }
 };
 
-Shape* shapes[] = { new Circle(5), new Rect(3, 4) };
-for (Shape* s : shapes) {
+Circle c(5);
+Rect   r(3, 4);
+
+Shape* shapes[] = { &c, &r };
+for (Shape* s : shapes)
     s->print();   // 각 타입의 area() 호출
-    delete s;
-}
 ```
 
 ---
