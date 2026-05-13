@@ -27,14 +27,14 @@ layout: default
 class Shape {              // 기본 클래스 (Base Class)
 public:
     double x, y;
-    Shape(double x, double y) : x(x), y(y) {}
+    Shape(double _x, double _y) : x(_x), y(_y) {}
     void print() const { printf("위치: (%.1f, %.1f)\n", x, y); }
 };
 
 class Circle : public Shape {  // 파생 클래스 (Derived Class)
     double radius;
 public:
-    Circle(double x, double y, double r) : Shape(x, y), radius(r) {}
+    Circle(double _x, double _y, double r) : Shape(_x, _y), radius(r) {}
     double area() const { return 3.14159 * radius * radius; }
 };
 ```
@@ -45,7 +45,7 @@ layout: two-cols-header
 
 # 기본 문법
 
-`class 파생 : public 기본` 형태로 상속한다. 파생 클래스는 기본 클래스의 `public` / `protected` 멤버를 그대로 사용할 수 있다.
+`class 파생 : public 기본` 형태로 상속함. 파생 클래스는 기본 클래스의 `public` / `protected` 멤버를 그대로 사용 가능.
 
 ::left::
 
@@ -55,20 +55,17 @@ layout: two-cols-header
 class Shape {
 public:
     double x, y;
-    Shape(double x, double y) : x(x), y(y) {}
+    Shape(double _x, double _y) : x(_x), y(_y) {}
 
-    double area() const { return 0.0; }
-
-    void print() const {
-        printf("넓이: %.2f\n", area());
-    }
+    double area() const   { return 0.0; }
+    void   print() const  { printf("넓이: %.2f\n", area()); }
 };
 
 class Circle : public Shape {
     double r;
 public:
-    Circle(double x, double y, double r)
-        : Shape(x, y), r(r) {} // 기본 클래스 생성자 호출
+    Circle(double _x, double _y, double _r)
+        : Shape(_x, _y), r(_r) {} // 기본 클래스 생성자 호출
 
     double area() const { return 3.14159 * r * r; }
 };
@@ -76,8 +73,8 @@ public:
 class Rect : public Shape {
     double w, h;
 public:
-    Rect(double x, double y, double w, double h)
-        : Shape(x, y), w(w), h(h) {}
+    Rect(double _x, double _y, double _w, double _h)
+        : Shape(_x, _y), w(_w), h(_h) {}
 
     double area() const { return w * h; }
 };
@@ -93,7 +90,7 @@ Rect   r(0.0, 0.0, 3.0, 4.0);
 
 // 상속된 멤버 사용
 printf("x=%.1f\n", c.x);     // Shape의 x
-c.print();                     // Shape의 print() → area() 호출
+c.print();                   // Shape의 print() → area() 호출
 
 // 파생 클래스 멤버
 printf("%.2f\n", c.area());   // Circle::area
@@ -103,6 +100,64 @@ printf("%.2f\n", r.area());   // Rect::area
 <br>
 
 > `print()`는 `Shape`에 한 번만 정의했지만 `Circle`, `Rect` 모두에서 동작한다.
+
+---
+layout: two-cols-header
+---
+
+# `private` 멤버
+
+기본 클래스의 `private` 멤버는 **파생 클래스에서도 직접 접근할 수 없다**. 접근하려면 기본 클래스가 제공하는 `public` 또는 `protected` 인터페이스를 통해야 한다.
+
+::left::
+
+## ❌ 직접 접근 — 컴파일 오류
+
+```cpp {}
+class Account {
+    double balance;   // private
+public:
+    Account(double _balance) : balance(_balance) {}
+};
+
+class SavingsAccount : public Account {
+public:
+    SavingsAccount(double _balance)
+        : Account(_balance) {}
+
+    void addInterest(double rate) {
+        balance *= (1 + rate);  // ❌ private 접근 불가
+    }
+};
+```
+
+::right::
+
+## ✅ 인터페이스를 통한 접근
+
+```cpp {}
+class Account {
+    double balance;   // private
+public:
+    Account(double _balance) : balance(_balance) {}
+
+    double getBalance() const { return balance; }
+    void   deposit(double amount) { balance += amount; }
+};
+
+class SavingsAccount : public Account {
+public:
+    SavingsAccount(double _balance)
+        : Account(_balance) {}
+
+    void addInterest(double rate) {
+        // public 인터페이스를 통해 간접 접근
+        deposit(getBalance() * rate);  // ✅
+    }
+};
+```
+
+> `private` 멤버는 선언한 클래스만 접근 가능하다. 파생 클래스도 예외가 없다.
 
 ---
 layout: two-cols-header
@@ -121,14 +176,14 @@ private:
 protected:
     double x, y;      // 파생 클래스 내부에서 접근 가능
 public:
-    Shape(double x, double y) : id(0), x(x), y(y) {}
+    Shape(double _x, double _y) : id(0), x(_x), y(_y) {}
 };
 
 class Circle : public Shape {
     double r;
 public:
-    Circle(double x, double y, double r)
-        : Shape(x, y), r(r) {}
+    Circle(double _x, double _y, double _r)
+        : Shape(_x, _y), r(_r) {}
 
     void move(double dx, double dy) {
         // id += 1;  // ❌ private — 접근 불가
@@ -260,8 +315,8 @@ layout: default
 class Shape {
 public:
     double x, y;
-    Shape(double x, double y) : x(x), y(y) {
-        printf("Shape(%g, %g) 생성\n", x, y);
+    Shape(double _x, double _y) : x(_x), y(_y) {
+        printf("Shape(%g, %g) 생성\n", _x, _y);
     }
 };
 
@@ -269,18 +324,18 @@ class Circle : public Shape {
     double r;
 public:
     //           ↓ 기본 클래스 생성자 호출
-    Circle(double x, double y, double r)
-        : Shape(x, y), r(r) {   // Shape 먼저 초기화
-        printf("Circle(r=%g) 생성\n", r);
+    Circle(double _x, double _y, double _r)
+        : Shape(_x, _y), r(_r) {   // Shape 먼저 초기화
+        printf("Circle(r=%g) 생성\n", _r);
     }
 };
 
 class Cylinder : public Circle {
     double h;
 public:
-    Cylinder(double x, double y, double r, double h)
-        : Circle(x, y, r), h(h) {  // Circle → Shape 순으로 초기화
-        printf("Cylinder(h=%g) 생성\n", h);
+    Cylinder(double _x, double _y, double _r, double _h)
+        : Circle(_x, _y, _r), h(_h) {  // Circle → Shape 순으로 초기화
+        printf("Cylinder(h=%g) 생성\n", _h);
     }
 };
 ```
@@ -312,7 +367,7 @@ public:
 class Circle : public Shape {
     double r;
 public:
-    Circle(double r) : Shape(0,0), r(r) {}
+    Circle(double _r) : Shape(0,0), r(_r) {}
 
     // Shape::area를 가린다 (hiding)
     double area() const {
