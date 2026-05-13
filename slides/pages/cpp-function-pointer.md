@@ -305,3 +305,140 @@ int main() {
     printf("%d\n", table[1](2, 3));     // 6
 }
 ```
+
+---
+layout: two-cols-header
+---
+
+# C++ 클래스와 `qsort`
+
+`qsort` 비교 콜백에서 `const void*`를 **클래스 포인터로 캐스팅**해 멤버에 접근한다.
+
+::left::
+
+## 클래스 & 비교 함수
+
+```cpp {}
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+
+class Student {
+public:
+    char name[20];
+    int  score;
+    Student(const char* _name, int _score)
+        : score(_score) {
+        strncpy(name, _name, 20);
+    }
+};
+
+int cmp_by_score(const void* a, const void* b) {
+    const Student* sa = (const Student*)a;
+    const Student* sb = (const Student*)b;
+    return sb->score - sa->score;  // 내림차순
+}
+
+int cmp_by_name(const void* a, const void* b) {
+    const Student* sa = (const Student*)a;
+    const Student* sb = (const Student*)b;
+    return strcmp(sa->name, sb->name);  // 오름차순
+}
+```
+
+::right::
+
+## main — 콜백 교체로 정렬 기준 변경
+
+```cpp {}
+int main() {
+    Student arr[] = {
+        Student("Alice", 85),
+        Student("Bob",   92),
+        Student("Carol", 78),
+    };
+
+    qsort(arr, 3, sizeof(Student), cmp_by_score);
+    for (int i = 0; i < 3; i++)
+        printf("%s: %d\n", arr[i].name, arr[i].score);
+    // Bob: 92
+    // Alice: 85
+    // Carol: 78
+
+    qsort(arr, 3, sizeof(Student), cmp_by_name);
+    for (int i = 0; i < 3; i++)
+        printf("%s: %d\n", arr[i].name, arr[i].score);
+    // Alice: 85
+    // Bob: 92
+    // Carol: 78
+}
+```
+
+> `const void*` → `const Student*` 캐스팅으로 클래스 멤버에 접근한다.
+
+---
+layout: two-cols-header
+---
+
+# `std::sort` + `operator<`
+
+`operator<`를 정의하면 `std::sort`가 **타입 안전하게** 객체를 정렬한다. `void*` 캐스팅이 불필요하다.
+
+::left::
+
+## 클래스에 `operator<` 정의
+
+```cpp {}
+#include <algorithm>
+#include <cstdio>
+#include <cstring>
+
+class Student {
+public:
+    char name[20];
+    int  score;
+    Student(const char* _name, int _score)
+        : score(_score) {
+        strncpy(name, _name, 20);
+    }
+
+    // score 기준 내림차순
+    bool operator<(const Student& other) const {
+        return score > other.score;
+    }
+};
+```
+
+`operator<`를 오버로딩하면 `std::sort`가 기본 정렬 기준으로 사용한다.
+
+::right::
+
+## main — `std::sort` 사용
+
+```cpp {}
+int main() {
+    Student arr[] = {
+        Student("Alice", 85),
+        Student("Bob",   92),
+        Student("Carol", 78),
+    };
+
+    // operator< 기준으로 정렬 (score 내림차순)
+    std::sort(arr, arr + 3);
+    for (int i = 0; i < 3; i++)
+        printf("%s: %d\n", arr[i].name, arr[i].score);
+    // Bob: 92
+    // Alice: 85
+    // Carol: 78
+
+    // 람다로 기준 교체 (name 오름차순)
+    std::sort(arr, arr + 3, [](const Student& a, const Student& b) {
+        return strcmp(a.name, b.name) < 0;
+    });
+    for (int i = 0; i < 3; i++)
+        printf("%s: %d\n", arr[i].name, arr[i].score);
+    // Alice: 85  Bob: 92  Carol: 78
+}
+```
+
+> `qsort`는 `void*` 캐스팅이 필요하지만, `std::sort`는 **타입을 그대로 유지**한다.
