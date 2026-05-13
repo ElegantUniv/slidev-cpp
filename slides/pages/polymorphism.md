@@ -38,53 +38,6 @@ void render(Shape* s) {
 layout: two-cols-header
 ---
 
-# 정적 다형성 (Static Polymorphism)
-
-컴파일 타임에 결정되는 다형성이다. 오버헤드가 없지만 **런타임 유연성은 없다**.
-
-::left::
-
-## 함수 오버로딩
-
-```cpp {}
-// 이름은 같지만 매개변수 타입이 다름
-void print(int n)         { printf("%d\n",    n); }
-void print(double d)      { printf("%.2f\n",  d); }
-void print(const char* s) { printf("%s\n",    s); }
-
-print(42);       // print(int)    호출
-print(3.14);     // print(double) 호출
-print("hello");  // print(const char*) 호출
-```
-
-컴파일러가 인수 타입을 보고 **호출할 함수를 컴파일 타임에 결정**한다.
-
-::right::
-
-## 함수 템플릿
-
-```cpp {}
-// 타입에 관계없이 동일 로직 적용
-template<typename T>
-T max_val(T a, T b) { return a > b ? a : b; }
-
-printf("%d\n",   max_val(3, 5));       // max_val<int>
-printf("%.1f\n", max_val(2.7, 1.3));   // max_val<double>
-```
-
-<br>
-
-| | 정적 다형성 | 동적 다형성 |
-|---|---|---|
-| 결정 시점 | 컴파일 타임 | 런타임 |
-| 성능 | 최적 | 간접 호출 1회 |
-| 유연성 | 낮음 | 높음 |
-| 새 타입 추가 | 재컴파일 필요 | 코드 수정 불필요 |
-
----
-layout: two-cols-header
----
-
 # 가상 함수 (Virtual Function)
 
 `virtual` 키워드를 붙이면 **파생 클래스의 재정의 함수가 런타임에 호출**된다.
@@ -291,7 +244,7 @@ layout: two-cols-header
 
 ::left::
 
-## ❌ 가상 소멸자 없음 — 메모리 누수
+### ❌ 가상 소멸자 없음 — 메모리 누수
 
 ```cpp {}
 class Base {
@@ -317,7 +270,7 @@ delete p;
 
 ::right::
 
-## ✅ 가상 소멸자 — 올바른 소멸
+### ✅ 가상 소멸자 — 올바른 소멸
 
 ```cpp {}
 class Base {
