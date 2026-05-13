@@ -91,7 +91,7 @@ int mul(int a, int b) { return a * b; }
 
 // op 자리에 어떤 함수든 전달 가능
 int apply(int a, int b, int (*op)(int, int)) {
-    return op(a, b);
+  return op(a, b);
 }
 
 printf("%d\n", apply(3, 4, add));  // 7
@@ -133,10 +133,10 @@ layout: two-cols-header
 ```cpp {}
 // <cstdlib>
 void qsort(
-    void*  base,   // 배열 시작 주소
-    size_t count,  // 원소 개수
-    size_t size,   // 원소 하나의 크기 (bytes)
-    int (*cmp)(const void*, const void*)  // 비교 콜백
+  void*  base,   // 배열 시작 주소
+  size_t count,  // 원소 개수
+  size_t size,   // 원소 하나의 크기 (bytes)
+  int (*cmp)(const void*, const void*)  // 비교 콜백
 );
 ```
 
@@ -159,13 +159,13 @@ void qsort(
 #include <cstdio>
 
 int cmp_asc(const void* a, const void* b) {
-    return *(int*)a - *(int*)b;
-    //  음수 → a 앞, 양수 → b 앞 (오름차순)
+  return *(int*)a - *(int*)b;
+  //  음수 → a 앞, 양수 → b 앞 (오름차순)
 }
 
 int cmp_desc(const void* a, const void* b) {
-    return *(int*)b - *(int*)a;
-    //  반대 방향 (내림차순)
+  return *(int*)b - *(int*)a;
+  //  반대 방향 (내림차순)
 }
 
 int arr[] = { 5, 2, 8, 1, 9 };
@@ -199,17 +199,17 @@ int mul(int a, int b) { return a * b; }
 
 int apply(int a, int b,
           int (*op)(int, int)) {
-    return op(a, b);
+  return op(a, b);
 }
 
 int main() {
-    int (*op)(int, int) = add;
-    printf("%d\n", op(3, 4));           // 7
-    printf("%d\n", apply(3, 4, mul));   // 12
+  int (*op)(int, int) = add;
+  printf("%d\n", op(3, 4));           // 7
+  printf("%d\n", apply(3, 4, mul));   // 12
 
-    int (*table[2])(int, int) = { add, mul };
-    printf("%d\n", table[0](2, 3));     // 5
-    printf("%d\n", table[1](2, 3));     // 6
+  int (*table[2])(int, int) = { add, mul };
+  printf("%d\n", table[0](2, 3));     // 5
+  printf("%d\n", table[1](2, 3));     // 6
 }
 ```
 
@@ -226,17 +226,17 @@ int add(int a, int b) { return a + b; }
 int mul(int a, int b) { return a * b; }
 
 int apply(int a, int b, BinaryOp op) {
-    return op(a, b);
+  return op(a, b);
 }
 
 int main() {
-    BinaryOp op = add;
-    printf("%d\n", op(3, 4));           // 7
-    printf("%d\n", apply(3, 4, mul));   // 12
+  BinaryOp op = add;
+  printf("%d\n", op(3, 4));           // 7
+  printf("%d\n", apply(3, 4, mul));   // 12
 
-    BinaryOp table[2] = { add, mul };
-    printf("%d\n", table[0](2, 3));     // 5
-    printf("%d\n", table[1](2, 3));     // 6
+  BinaryOp table[2] = { add, mul };
+  printf("%d\n", table[0](2, 3));     // 5
+  printf("%d\n", table[1](2, 3));     // 6
 }
 ```
 
@@ -263,17 +263,17 @@ int add(int a, int b) { return a + b; }
 int mul(int a, int b) { return a * b; }
 
 int apply(int a, int b, BinaryOp op) {
-    return op(a, b);
+  return op(a, b);
 }
 
 int main() {
-    BinaryOp op = add;
-    printf("%d\n", op(3, 4));           // 7
-    printf("%d\n", apply(3, 4, mul));   // 12
+  BinaryOp op = add;
+  printf("%d\n", op(3, 4));           // 7
+  printf("%d\n", apply(3, 4, mul));   // 12
 
-    BinaryOp table[2] = { add, mul };
-    printf("%d\n", table[0](2, 3));     // 5
-    printf("%d\n", table[1](2, 3));     // 6
+  BinaryOp table[2] = { add, mul };
+  printf("%d\n", table[0](2, 3));     // 5
+  printf("%d\n", table[1](2, 3));     // 6
 }
 ```
 
@@ -292,17 +292,17 @@ int add(int a, int b) { return a + b; }
 int mul(int a, int b) { return a * b; }
 
 int apply(int a, int b, BinaryOp op) {
-    return op(a, b);
+  return op(a, b);
 }
 
 int main() {
-    BinaryOp op = add;
-    printf("%d\n", op(3, 4));           // 7
-    printf("%d\n", apply(3, 4, mul));   // 12
+  BinaryOp op = add;
+  printf("%d\n", op(3, 4));           // 7
+  printf("%d\n", apply(3, 4, mul));   // 12
 
-    BinaryOp table[2] = { add, mul };
-    printf("%d\n", table[0](2, 3));     // 5
-    printf("%d\n", table[1](2, 3));     // 6
+  BinaryOp table[2] = { add, mul };
+  printf("%d\n", table[0](2, 3));     // 5
+  printf("%d\n", table[1](2, 3));     // 6
 }
 ```
 
@@ -325,24 +325,24 @@ layout: two-cols-header
 
 class Student {
 public:
-    char name[20];
-    int  score;
-    Student(const char* _name, int _score)
-        : score(_score) {
-        strncpy(name, _name, 20);
-    }
+  char name[20];
+  int  score;
+  Student(const char* _name, int _score)
+    : score(_score) {
+    strncpy(name, _name, 20);
+  }
 };
 
 int cmp_by_score(const void* a, const void* b) {
-    const Student* sa = (const Student*)a;
-    const Student* sb = (const Student*)b;
-    return sb->score - sa->score;  // 내림차순
+  const Student* sa = (const Student*)a;
+  const Student* sb = (const Student*)b;
+  return sb->score - sa->score;  // 내림차순
 }
 
 int cmp_by_name(const void* a, const void* b) {
-    const Student* sa = (const Student*)a;
-    const Student* sb = (const Student*)b;
-    return strcmp(sa->name, sb->name);  // 오름차순
+  const Student* sa = (const Student*)a;
+  const Student* sb = (const Student*)b;
+  return strcmp(sa->name, sb->name);  // 오름차순
 }
 ```
 
@@ -352,25 +352,23 @@ int cmp_by_name(const void* a, const void* b) {
 
 ```cpp {}
 int main() {
-    Student arr[] = {
-        Student("Alice", 85),
-        Student("Bob",   92),
-        Student("Carol", 78),
-    };
+  Student arr[] = {
+    Student("Alice", 85), Student("Bob", 92), Student("Carol", 78)
+  };
 
-    qsort(arr, 3, sizeof(Student), cmp_by_score);
-    for (int i = 0; i < 3; i++)
-        printf("%s: %d\n", arr[i].name, arr[i].score);
-    // Bob: 92
-    // Alice: 85
-    // Carol: 78
+  qsort(arr, 3, sizeof(Student), cmp_by_score);
+  for (int i = 0; i < 3; i++)
+    printf("%s: %d\n", arr[i].name, arr[i].score);
+  // Bob: 92
+  // Alice: 85
+  // Carol: 78
 
-    qsort(arr, 3, sizeof(Student), cmp_by_name);
-    for (int i = 0; i < 3; i++)
-        printf("%s: %d\n", arr[i].name, arr[i].score);
-    // Alice: 85
-    // Bob: 92
-    // Carol: 78
+  qsort(arr, 3, sizeof(Student), cmp_by_name);
+  for (int i = 0; i < 3; i++)
+    printf("%s: %d\n", arr[i].name, arr[i].score);
+  // Alice: 85
+  // Bob: 92
+  // Carol: 78
 }
 ```
 
@@ -382,11 +380,11 @@ layout: two-cols-header
 
 # `std::sort` + `operator<`
 
-`operator<`를 정의하면 `std::sort`가 **타입 안전하게** 객체를 정렬한다. `void*` 캐스팅이 불필요하다.
+`operator<`는 **멤버 함수** 또는 **전역 함수** 두 가지 방식으로 정의할 수 있다.
 
 ::left::
 
-## 클래스에 `operator<` 정의
+### 멤버 함수로 정의
 
 ```cpp {}
 #include <algorithm>
@@ -395,65 +393,75 @@ layout: two-cols-header
 
 class Student {
 public:
-    char name[20];
-    int  score;
-    Student(const char* _name, int _score)
-        : score(_score) {
-        strncpy(name, _name, 20);
-    }
+  char name[20];
+  int  score;
+  Student(const char* _name, int _score)
+    : score(_score) { strncpy(name, _name, 20); }
 
-    // score 기준 내림차순
-    bool operator<(const Student& other) const {
-        return score > other.score;
-    }
+  // 왼쪽 피연산자가 *this
+  bool operator<(const Student& o) const {
+    return score < o.score;
+  }
 };
-```
 
-`operator<`를 오버로딩하면 `std::sort`가 기본 정렬 기준으로 사용한다.
-
-::right::
-
-## main — `std::sort` 사용
-
-```cpp {}
 int main() {
-    Student arr[] = {
-        Student("Alice", 85),
-        Student("Bob",   92),
-        Student("Carol", 78),
-    };
-
-    // operator< 기준으로 정렬 (score 내림차순)
-    std::sort(arr, arr + 3);
-    for (int i = 0; i < 3; i++)
-        printf("%s: %d\n", arr[i].name, arr[i].score);
-    // Bob: 92
-    // Alice: 85
-    // Carol: 78
-
-    // 람다로 기준 교체 (name 오름차순)
-    std::sort(arr, arr + 3, [](const Student& a, const Student& b) {
-        return strcmp(a.name, b.name) < 0;
-    });
-    for (int i = 0; i < 3; i++)
-        printf("%s: %d\n", arr[i].name, arr[i].score);
-    // Alice: 85  Bob: 92  Carol: 78
+  Student arr[] = {
+    Student("Alice", 85), Student("Bob", 92), Student("Carol", 78)
+  };
+  std::sort(arr, arr + 3);
+  for (int i = 0; i < 3; i++)
+    printf("%s: %d\n", arr[i].name, arr[i].score);
+  // Carol: 78  Alice: 85  Bob: 92
 }
 ```
 
-> `qsort`는 `void*` 캐스팅이 필요하지만, `std::sort`는 **타입을 그대로 유지**한다.
+::right::
+
+### 전역 함수로 정의
+
+```cpp {}
+#include <algorithm>
+#include <cstdio>
+#include <cstring>
+
+class Student {
+public:
+  char name[20];
+  int  score;
+  Student(const char* _name, int _score)
+    : score(_score) { strncpy(name, _name, 20); }
+};
+
+// 두 피연산자를 모두 매개변수로 받음
+bool operator<(const Student& a, const Student& b) {
+  return a.score < b.score;
+}
+
+int main() {
+  Student arr[] = {
+    Student("Alice", 85), Student("Bob", 92), Student("Carol", 78)
+  };
+  std::sort(arr, arr + 3);
+  for (int i = 0; i < 3; i++)
+    printf("%s: %d\n", arr[i].name, arr[i].score);
+  // Carol: 78  Alice: 85  Bob: 92
+}
+```
+
+> 멤버 함수는 `this`가 왼쪽 피연산자, 전역 함수는 두 피연산자를 모두 인자로 받는다.
+
 
 ---
 layout: two-cols-header
 ---
 
-# `operator<` + `std::sort` — 오름차순 & 내림차순
+# 람다로 정렬 기준 교체
 
-`operator<` 하나만 정의하면 **람다로 방향을 반전**해 오름차순·내림차순 모두 처리할 수 있다.
+람다를 사용하면 **클래스 수정 없이** 호출 시점에 정렬 기준을 자유롭게 바꿀 수 있다.
 
 ::left::
 
-## ⬆ 오름차순 (operator< 기본)
+### score 기준 정렬
 
 ```cpp {}
 #include <algorithm>
@@ -462,35 +470,34 @@ layout: two-cols-header
 
 class Student {
 public:
-    char name[20];
-    int  score;
-    Student(const char* _name, int _score)
-        : score(_score) { strncpy(name, _name, 20); }
-
-    bool operator<(const Student& o) const {
-        return score < o.score;
-    }
+  char name[20];
+  int  score;
+  Student(const char* _name, int _score)
+    : score(_score) { strncpy(name, _name, 20); }
 };
 
 int main() {
-    Student arr[] = {
-        Student("Alice", 85),
-        Student("Bob",   92),
-        Student("Carol", 78),
-    };
+  Student arr[] = {
+    Student("Alice", 85), Student("Bob", 92), Student("Carol", 78)
+  };
 
-    std::sort(arr, arr + 3);        // operator< 그대로 사용
-    for (int i = 0; i < 3; i++)
-        printf("%s: %d\n", arr[i].name, arr[i].score);
-    // Carol: 78
-    // Alice: 85
-    // Bob:   92
+  std::sort(arr, arr + 3,   // 오름차순
+    [](const Student& a, const Student& b) {
+      return a.score < b.score;
+    });
+  // Carol: 78  Alice: 85  Bob: 92
+
+  std::sort(arr, arr + 3,   // 내림차순
+    [](const Student& a, const Student& b) {
+      return a.score > b.score;
+    });
+  // Bob: 92  Alice: 85  Carol: 78
 }
 ```
 
 ::right::
 
-## ⬇ 내림차순 (람다로 반전)
+### name 기준 정렬
 
 ```cpp {}
 #include <algorithm>
@@ -499,33 +506,29 @@ int main() {
 
 class Student {
 public:
-    char name[20];
-    int  score;
-    Student(const char* _name, int _score)
-        : score(_score) { strncpy(name, _name, 20); }
-
-    bool operator<(const Student& o) const {
-        return score < o.score;
-    }
+  char name[20];
+  int  score;
+  Student(const char* _name, int _score)
+    : score(_score) { strncpy(name, _name, 20); }
 };
 
 int main() {
-    Student arr[] = {
-        Student("Alice", 85),
-        Student("Bob",   92),
-        Student("Carol", 78),
-    };
+  Student arr[] = {
+    Student("Alice", 85), Student("Bob", 92), Student("Carol", 78)
+  };
 
-    std::sort(arr, arr + 3,
-        [](const Student& a, const Student& b) {
-            return b < a;   // a < b 를 뒤집어 내림차순
-        });
-    for (int i = 0; i < 3; i++)
-        printf("%s: %d\n", arr[i].name, arr[i].score);
-    // Bob:   92
-    // Alice: 85
-    // Carol: 78
+  std::sort(arr, arr + 3,   // 오름차순
+    [](const Student& a, const Student& b) {
+      return strcmp(a.name, b.name) < 0;
+    });
+  // Alice: 85  Bob: 92  Carol: 78
+
+  std::sort(arr, arr + 3,   // 내림차순
+    [](const Student& a, const Student& b) {
+      return strcmp(a.name, b.name) > 0;
+    });
+  // Carol: 78  Bob: 92  Alice: 85
 }
 ```
 
-> `b < a`는 `operator<`를 재활용해 방향만 반전한다. `operator>`를 별도로 정의할 필요가 없다.
+> 같은 클래스로 score·name 기준, 오름·내림차순을 람다 하나씩 교체해 모두 처리한다.
