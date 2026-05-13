@@ -8,7 +8,8 @@
       "Bash(where clang-format *)",
       "Bash(pip install *)",
       "Bash(python3 -c ' *)",
-      "PowerShell(& \"C:\\\\dev\\\\source\\\\repos\\\\slidev-cpp\\\\slides\\\\op_test.exe\")"
+      "PowerShell(& \"C:\\\\dev\\\\source\\\\repos\\\\slidev-cpp\\\\slides\\\\op_test.exe\")",
+      "Bash(git *)"
     ]
   }
 }

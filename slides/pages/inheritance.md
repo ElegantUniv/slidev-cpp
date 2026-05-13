@@ -404,7 +404,6 @@ Rect* rp = dynamic_cast<Rect*>(p);
 // rp == nullptr — 타입 불일치
 ```
 
-<br>
 
 | | `static_cast` | `dynamic_cast` |
 |---|---|---|
