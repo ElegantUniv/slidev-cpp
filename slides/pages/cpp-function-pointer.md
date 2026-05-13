@@ -189,39 +189,37 @@ layout: two-cols-header
 
 ::left::
 
-## 선언 문법
+### ❌ typedef 없이
 
 ```cpp {}
-// typedef 없이 — 복잡한 문법 반복
-int (*op1)(int, int) = add;
-int (*op2)(int, int) = sub;
+#include <cstdio>
 
-void call(int (*cb)(int, int));
+int add(int a, int b) { return a + b; }
+int mul(int a, int b) { return a * b; }
 
-int (*table[4])(int, int);
-```
+int apply(int a, int b,
+          int (*op)(int, int)) {
+    return op(a, b);
+}
 
-<br>
+int main() {
+    int (*op)(int, int) = add;
+    printf("%d\n", op(3, 4));           // 7
+    printf("%d\n", apply(3, 4, mul));   // 12
 
-```cpp {}
-// typedef로 타입에 이름 부여
-typedef int (*BinaryOp)(int, int);
-//      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-//      반환타입 (*별칭이름)(매개변수 타입...)
-
-BinaryOp op1 = add;
-BinaryOp op2 = sub;
-
-void call(BinaryOp cb);
-
-BinaryOp table[4];
+    int (*table[2])(int, int) = { add, mul };
+    printf("%d\n", table[0](2, 3));     // 5
+    printf("%d\n", table[1](2, 3));     // 6
+}
 ```
 
 ::right::
 
-## 활용 예제
+### ✅ typedef 사용
 
 ```cpp {}
+#include <cstdio>
+
 typedef int (*BinaryOp)(int, int);
 
 int add(int a, int b) { return a + b; }
@@ -233,18 +231,15 @@ int apply(int a, int b, BinaryOp op) {
 
 int main() {
     BinaryOp op = add;
-    printf("%d\n", op(3, 4));          // 7
+    printf("%d\n", op(3, 4));           // 7
+    printf("%d\n", apply(3, 4, mul));   // 12
 
-    printf("%d\n", apply(3, 4, add));  // 7
-    printf("%d\n", apply(3, 4, mul));  // 12
-
-    BinaryOp ops[] = { add, mul };
-    printf("%d\n", ops[0](2, 3));      // 5
-    printf("%d\n", ops[1](2, 3));      // 6
+    BinaryOp table[2] = { add, mul };
+    printf("%d\n", table[0](2, 3));     // 5
+    printf("%d\n", table[1](2, 3));     // 6
 }
 ```
 
-> `typedef`는 C에서도 사용 가능한 방식이다.
 
 ---
 layout: two-cols-header
@@ -252,28 +247,17 @@ layout: two-cols-header
 
 # `using` — 가독성 개선 (C++11)
 
-C++11의 `using`은 `typedef`보다 **읽는 방향이 자연스럽고** 템플릿과도 함께 쓸 수 있다.
+C++11의 `using`은 `typedef`보다 **읽는 방향이 자연스럽다**. <br>
+`별칭 = 타입` 형태로 일반 변수 선언과 동일한 방향으로 읽힌다.
 
 ::left::
 
-## 선언 문법
+### ❌ using 없이 (typedef)
 
 ```cpp {}
-// typedef — 오른쪽에서 왼쪽으로 읽어야 함
+#include <cstdio>
+
 typedef int (*BinaryOp)(int, int);
-
-// using — 왼쪽에서 오른쪽으로 자연스럽게 읽힘
-using BinaryOp = int (*)(int, int);
-//    ^^^^^^^^^   ^^^^^^^^^^^^^^^^^^
-//    별칭이름  =  실제 타입
-```
-
-<br>
-
-## 활용 예제
-
-```cpp {}
-using BinaryOp = int (*)(int, int);
 
 int add(int a, int b) { return a + b; }
 int mul(int a, int b) { return a * b; }
@@ -282,32 +266,42 @@ int apply(int a, int b, BinaryOp op) {
     return op(a, b);
 }
 
-BinaryOp op = add;
-printf("%d\n", apply(3, 4, op));   // 7
+int main() {
+    BinaryOp op = add;
+    printf("%d\n", op(3, 4));           // 7
+    printf("%d\n", apply(3, 4, mul));   // 12
 
-BinaryOp ops[] = { add, mul };
-printf("%d\n", ops[1](2, 3));      // 6
+    BinaryOp table[2] = { add, mul };
+    printf("%d\n", table[0](2, 3));     // 5
+    printf("%d\n", table[1](2, 3));     // 6
+}
 ```
 
 ::right::
 
-## `typedef` vs `using`
-
-| | `typedef` | `using` |
-|---|---|---|
-| 도입 | C / C++ | C++11 |
-| 가독성 | 오른쪽→왼쪽 | 왼쪽→오른쪽 |
-| 템플릿 별칭 | ❌ 불가 | ✅ 가능 |
-| 권장 여부 | C 호환 필요 시 | **C++에서 권장** |
-
-<br>
+### ✅ using 사용
 
 ```cpp {}
-// using은 템플릿 별칭도 지원
-template<typename T>
-using Comparator = int (*)(const T*, const T*);
+#include <cstdio>
 
-// typedef로는 이런 표현 불가
+using BinaryOp = int (*)(int, int);
+//    ^^^^^^^^^   ^^^^^^^^^^^^^^^^^^
+//    별칭이름  =  실제 타입 (좌→우로 읽힘)
+
+int add(int a, int b) { return a + b; }
+int mul(int a, int b) { return a * b; }
+
+int apply(int a, int b, BinaryOp op) {
+    return op(a, b);
+}
+
+int main() {
+    BinaryOp op = add;
+    printf("%d\n", op(3, 4));           // 7
+    printf("%d\n", apply(3, 4, mul));   // 12
+
+    BinaryOp table[2] = { add, mul };
+    printf("%d\n", table[0](2, 3));     // 5
+    printf("%d\n", table[1](2, 3));     // 6
+}
 ```
-
-> C++ 코드에서는 `using`을 사용한다.
