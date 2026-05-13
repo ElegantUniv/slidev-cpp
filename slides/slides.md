@@ -100,3 +100,7 @@ src: ./pages/inheritance.md
 ---
 src: ./pages/polymorphism.md
 ---
+
+---
+src: ./pages/cpp-function-pointer.md
+---
