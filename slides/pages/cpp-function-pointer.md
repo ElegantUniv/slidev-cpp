@@ -183,49 +183,20 @@ qsort(arr, 5, sizeof(int), cmp_desc);  // 다른 콜백 등록
 layout: two-cols-header
 ---
 
-# `typedef` & `using` — 가독성 개선
+# `typedef` — 가독성 개선 (C 스타일)
 
-함수 포인터 타입에 이름을 붙이면 선언과 매개변수가 훨씬 읽기 쉬워진다.
+`typedef`로 함수 포인터 타입에 이름을 붙이면 선언이 간결해진다.
 
 ::left::
 
-## 타입 별칭 선언
+## 선언 문법
 
 ```cpp {}
-// typedef (C 스타일)
-typedef int (*BinaryOp)(int, int);
-
-// using (C++11, 권장)
-using BinaryOp = int (*)(int, int);
-```
-
-<br>
-
-## 변수 · 매개변수에 활용
-
-```cpp {}
-BinaryOp op = add;
-printf("%d\n", op(3, 4));   // 7
-
-// 매개변수 선언이 명확해짐
-int apply(int a, int b, BinaryOp op) {
-    return op(a, b);
-}
-
-// 배열도 단순해짐
-BinaryOp ops[] = { add, sub, mul };
-```
-
-::right::
-
-## 별칭 없을 때 vs 있을 때
-
-```cpp {}
-// ❌ 별칭 없음 — 선언마다 복잡한 문법 반복
+// typedef 없이 — 복잡한 문법 반복
 int (*op1)(int, int) = add;
 int (*op2)(int, int) = sub;
 
-void register(int (*cb)(int, int));
+void call(int (*cb)(int, int));
 
 int (*table[4])(int, int);
 ```
@@ -233,15 +204,110 @@ int (*table[4])(int, int);
 <br>
 
 ```cpp {}
-// ✅ using 사용 — 의도가 명확
-using BinaryOp = int (*)(int, int);
+// typedef로 타입에 이름 부여
+typedef int (*BinaryOp)(int, int);
+//      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//      반환타입 (*별칭이름)(매개변수 타입...)
 
 BinaryOp op1 = add;
 BinaryOp op2 = sub;
 
-void register(BinaryOp cb);
+void call(BinaryOp cb);
 
 BinaryOp table[4];
 ```
 
-> 함수 포인터 타입을 반복 사용한다면 `using`으로 이름을 붙인다.
+::right::
+
+## 활용 예제
+
+```cpp {}
+typedef int (*BinaryOp)(int, int);
+
+int add(int a, int b) { return a + b; }
+int mul(int a, int b) { return a * b; }
+
+int apply(int a, int b, BinaryOp op) {
+    return op(a, b);
+}
+
+int main() {
+    BinaryOp op = add;
+    printf("%d\n", op(3, 4));          // 7
+
+    printf("%d\n", apply(3, 4, add));  // 7
+    printf("%d\n", apply(3, 4, mul));  // 12
+
+    BinaryOp ops[] = { add, mul };
+    printf("%d\n", ops[0](2, 3));      // 5
+    printf("%d\n", ops[1](2, 3));      // 6
+}
+```
+
+> `typedef`는 C에서도 사용 가능한 방식이다.
+
+---
+layout: two-cols-header
+---
+
+# `using` — 가독성 개선 (C++11)
+
+C++11의 `using`은 `typedef`보다 **읽는 방향이 자연스럽고** 템플릿과도 함께 쓸 수 있다.
+
+::left::
+
+## 선언 문법
+
+```cpp {}
+// typedef — 오른쪽에서 왼쪽으로 읽어야 함
+typedef int (*BinaryOp)(int, int);
+
+// using — 왼쪽에서 오른쪽으로 자연스럽게 읽힘
+using BinaryOp = int (*)(int, int);
+//    ^^^^^^^^^   ^^^^^^^^^^^^^^^^^^
+//    별칭이름  =  실제 타입
+```
+
+<br>
+
+## 활용 예제
+
+```cpp {}
+using BinaryOp = int (*)(int, int);
+
+int add(int a, int b) { return a + b; }
+int mul(int a, int b) { return a * b; }
+
+int apply(int a, int b, BinaryOp op) {
+    return op(a, b);
+}
+
+BinaryOp op = add;
+printf("%d\n", apply(3, 4, op));   // 7
+
+BinaryOp ops[] = { add, mul };
+printf("%d\n", ops[1](2, 3));      // 6
+```
+
+::right::
+
+## `typedef` vs `using`
+
+| | `typedef` | `using` |
+|---|---|---|
+| 도입 | C / C++ | C++11 |
+| 가독성 | 오른쪽→왼쪽 | 왼쪽→오른쪽 |
+| 템플릿 별칭 | ❌ 불가 | ✅ 가능 |
+| 권장 여부 | C 호환 필요 시 | **C++에서 권장** |
+
+<br>
+
+```cpp {}
+// using은 템플릿 별칭도 지원
+template<typename T>
+using Comparator = int (*)(const T*, const T*);
+
+// typedef로는 이런 표현 불가
+```
+
+> C++ 코드에서는 `using`을 사용한다.
