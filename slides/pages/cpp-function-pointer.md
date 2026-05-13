@@ -442,3 +442,90 @@ int main() {
 ```
 
 > `qsort`는 `void*` 캐스팅이 필요하지만, `std::sort`는 **타입을 그대로 유지**한다.
+
+---
+layout: two-cols-header
+---
+
+# `operator<` + `std::sort` — 오름차순 & 내림차순
+
+`operator<` 하나만 정의하면 **람다로 방향을 반전**해 오름차순·내림차순 모두 처리할 수 있다.
+
+::left::
+
+## ⬆ 오름차순 (operator< 기본)
+
+```cpp {}
+#include <algorithm>
+#include <cstdio>
+#include <cstring>
+
+class Student {
+public:
+    char name[20];
+    int  score;
+    Student(const char* _name, int _score)
+        : score(_score) { strncpy(name, _name, 20); }
+
+    bool operator<(const Student& o) const {
+        return score < o.score;
+    }
+};
+
+int main() {
+    Student arr[] = {
+        Student("Alice", 85),
+        Student("Bob",   92),
+        Student("Carol", 78),
+    };
+
+    std::sort(arr, arr + 3);        // operator< 그대로 사용
+    for (int i = 0; i < 3; i++)
+        printf("%s: %d\n", arr[i].name, arr[i].score);
+    // Carol: 78
+    // Alice: 85
+    // Bob:   92
+}
+```
+
+::right::
+
+## ⬇ 내림차순 (람다로 반전)
+
+```cpp {}
+#include <algorithm>
+#include <cstdio>
+#include <cstring>
+
+class Student {
+public:
+    char name[20];
+    int  score;
+    Student(const char* _name, int _score)
+        : score(_score) { strncpy(name, _name, 20); }
+
+    bool operator<(const Student& o) const {
+        return score < o.score;
+    }
+};
+
+int main() {
+    Student arr[] = {
+        Student("Alice", 85),
+        Student("Bob",   92),
+        Student("Carol", 78),
+    };
+
+    std::sort(arr, arr + 3,
+        [](const Student& a, const Student& b) {
+            return b < a;   // a < b 를 뒤집어 내림차순
+        });
+    for (int i = 0; i < 3; i++)
+        printf("%s: %d\n", arr[i].name, arr[i].score);
+    // Bob:   92
+    // Alice: 85
+    // Carol: 78
+}
+```
+
+> `b < a`는 `operator<`를 재활용해 방향만 반전한다. `operator>`를 별도로 정의할 필요가 없다.
