@@ -139,14 +139,57 @@ delete p;
 ```
 
 ---
-layout: default
+layout: two-cols-header
 ---
 
 # 다형성 활용 예시
 
 기본 클래스 포인터/참조를 통해 파생 클래스 객체를 **동일한 코드로 처리**한다.
 
-<<< @/snippets/cpp-class/virtual_dispatch.cpp cpp
+::left::
+
+### 다형성을 활용한 클래스 선언
+
+```cpp {}
+#include <cstdio>
+#include <string>
+
+class Animal {
+public:
+    std::string name;
+    Animal(const std::string& n) : name(n) {}
+    virtual void speak() const { printf("%s: ...\n", name.c_str()); }
+    virtual ~Animal() {}
+};
+
+class Dog : public Animal {
+public:
+    Dog(const std::string& n) : Animal(n) {}
+    void speak() const override { printf("%s: 왈왈!\n", name.c_str()); }
+};
+
+class Cat : public Animal {
+public:
+    Cat(const std::string& n) : Animal(n) {}
+    void speak() const override { printf("%s: 야옹!\n", name.c_str()); }
+};
+```
+
+::right::
+
+### 메인함수에서의 활용
+
+```cpp {}
+int main() {
+    Dog dog("멍멍이");
+    Cat cat("냥냥이");
+    Dog dog2("바둑이");
+
+    Animal* zoo[] = { &dog, &cat, &dog2 };
+    for (Animal* a : zoo) a->speak();
+    // 출력: 멍멍이: 왈왈!  냥냥이: 야옹!  바둑이: 왈왈!
+}
+```
 
 ---
 layout: default
