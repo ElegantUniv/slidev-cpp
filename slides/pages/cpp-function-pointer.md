@@ -532,3 +532,213 @@ int main() {
 ```
 
 > 같은 클래스로 score·name 기준, 오름·내림차순을 람다 하나씩 교체해 모두 처리한다.
+
+
+
+---
+layout: two-cols-header
+---
+
+# 함수 포인터와 훅 (Hook)
+
+**훅**이란 기존 코드의 특정 시점에 **사용자 함수를 끼워 넣는** 패턴이다.
+함수 포인터가 훅 포인트(hook point) 역할을 한다.
+
+### 커스텀 훅 패턴
+
+::left::
+
+```cpp {}
+#include <cstdio>
+
+using HookFn = void (*)(const char*);
+
+HookFn on_before = nullptr;  // 훅 미설치 시 아무것도 안 함
+HookFn on_after  = nullptr;
+
+void process(const char* data) {
+  if (on_before) on_before(data);  // 전처리 훅 호출
+  printf("처리 중: %s\n", data);
+  if (on_after)  on_after(data);   // 후처리 훅 호출
+}
+
+void log_before(const char* d) { printf("[시작] %s\n", d); }
+void log_after (const char* d) { printf("[완료] %s\n", d); }
+```
+
+::right::
+
+```cpp {}
+int main() {
+  process("A");           // 훅 없이 실행
+  // 처리 중: A
+
+  on_before = log_before; // 훅 설치
+  on_after  = log_after;
+  process("B");           // 훅과 함께 실행
+  // [시작] B
+  // 처리 중: B
+  // [완료] B
+}
+```
+
+---
+layout: two-cols-header
+---
+
+# 함수 포인터와 훅 (Hook)
+
+표준 라이브러리에도 훅이 있음. 
+
+> 훅의 핵심: **호출 시점은 라이브러리/프레임워크가 결정**하고,
+> **무엇을 할지는 사용자가 함수 포인터로 전달**한다.
+
+::left::
+
+
+### `std::atexit` — 프로그램 종료 훅
+
+```cpp {}
+#include <cstdlib>
+#include <cstdio>
+
+void cleanup1() { printf("cleanup1 실행\n"); }
+void cleanup2() { printf("cleanup2 실행\n"); }
+
+int main() {
+  std::atexit(cleanup2);  // 종료 시 호출될 함수 등록
+  std::atexit(cleanup1);
+
+  printf("main 종료\n");
+}
+// 출력 (LIFO 순서):
+// main 종료
+// cleanup1 실행
+// cleanup2 실행
+```
+
+::right::
+
+### `std::set_new_handler` — 메모리 할당 실패 훅
+
+```cpp {}
+#include <new>
+#include <cstdlib>
+#include <cstdio>
+
+void on_alloc_fail() {
+  printf("메모리 부족!\n");
+  std::abort();
+}
+
+int main() {
+  // operator new 실패 시 호출될 훅 설치
+  std::set_new_handler(on_alloc_fail);
+}
+```
+
+
+
+---
+layout: two-cols-header
+---
+
+# 함수 포인터와 가상 함수
+
+`virtual` 함수는 내부적으로 **함수 포인터 배열(vtable)**로 구현된다.
+수동으로 함수 포인터를 관리하는 것을 컴파일러가 자동화한 것이다.
+
+::left::
+
+## 함수 포인터로 직접 구현 (수동)
+
+```cpp {}
+#include <cstdio>
+
+struct Animal {
+  const char* name;
+  void (*speak)(const char*);  // 함수 포인터 멤버
+};
+
+void dog_speak(const char* n) { printf("%s: 왈왈!\n", n); }
+void cat_speak(const char* n) { printf("%s: 야옹!\n", n); }
+
+int main() {
+  Animal dog = { "멍멍이", dog_speak };
+  Animal cat = { "냥냥이", cat_speak };
+
+  Animal* zoo[] = { &dog, &cat };
+  for (auto* a : zoo)
+    a->speak(a->name);  // 함수 포인터로 직접 디스패치
+  // 멍멍이: 왈왈!
+  // 냥냥이: 야옹!
+}
+```
+
+::right::
+
+## `virtual` 함수 (컴파일러 자동 관리)
+
+```cpp {}
+#include <cstdio>
+
+class Animal {
+public:
+  const char* name;
+  Animal(const char* _name) : name(_name) {}
+  virtual void speak() const = 0;
+};
+
+class Dog : public Animal {
+public:
+  Dog(const char* _name) : Animal(_name) {}
+  void speak() const override { printf("%s: 왈왈!\n", name); }
+};
+
+class Cat : public Animal {
+public:
+  Cat(const char* _name) : Animal(_name) {}
+  void speak() const override { printf("%s: 야옹!\n", name); }
+};
+
+int main() {
+  Dog dog("멍멍이");
+  Cat cat("냥냥이");
+  Animal* zoo[] = { &dog, &cat };
+  for (auto* a : zoo)
+    a->speak();  // vtable을 통해 자동 디스패치
+  // 멍멍이: 왈왈!
+  // 냥냥이: 야옹!
+}
+```
+
+---
+layout: default
+---
+
+# 함수 포인터 vs vtable
+
+`virtual` 함수를 가진 클래스는 컴파일러가 **vtable(가상 함수 테이블)**을 자동 생성한다.
+vtable은 본질적으로 **함수 포인터 배열**이다.
+
+```
+                   수동 (함수 포인터)              자동 (virtual / vtable)
+                  ┌──────────────────┐            ┌──────────────────────┐
+  Animal dog      │ name: "멍멍이"    │  Dog 객체  │ vptr ─────────────┐  │
+                  │ speak: dog_speak─┼──────────▶ │ name: "멍멍이"    │  │
+                  └──────────────────┘            └───────────────────┼──┘
+                                                                       ▼
+                                                              Dog vtable
+                                                         ┌──────────────────┐
+                                                         │ [0] Dog::speak   │
+                                                         └──────────────────┘
+```
+
+| | 함수 포인터 (수동) | `virtual` 함수 (자동) |
+|---|---|---|
+| 테이블 관리 | 개발자가 직접 | 컴파일러 자동 생성 |
+| 타입 안전성 | 없음 (`void*` 등 위험) | 있음 |
+| 상속 연동 | 없음 | 파생 클래스 자동 반영 |
+| 오버헤드 | 동일 (포인터 1회 역참조) | 동일 (포인터 1회 역참조) |
+
+> `virtual` 함수는 함수 포인터 디스패치를 **타입 시스템과 상속에 통합**한 것이다.
