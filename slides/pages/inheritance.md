@@ -107,7 +107,8 @@ layout: two-cols-header
 
 # `private` 멤버
 
-기본 클래스의 `private` 멤버는 **파생 클래스에서도 직접 접근할 수 없다**. 접근하려면 기본 클래스가 제공하는 `public` 또는 `protected` 인터페이스를 통해야 한다.
+기본 클래스의 `private` 멤버는 **파생 클래스에서도 직접 접근할 수 없다**.  <br>
+접근하려면 기본 클래스가 제공하는 `protected` 또는 `public` 인터페이스를 통해야 한다.
 
 ::left::
 
@@ -157,7 +158,6 @@ public:
 };
 ```
 
-> `private` 멤버는 선언한 클래스만 접근 가능하다. 파생 클래스도 예외가 없다.
 
 ---
 layout: two-cols-header
@@ -165,7 +165,8 @@ layout: two-cols-header
 
 # `protected` 멤버
 
-`private`은 파생 클래스에서도 접근 불가. `protected`는 **파생 클래스 내부에서만** 접근 가능하다.
+`protected`는 **파생 클래스 내부에서만** 접근 가능하다. <br>
+`private`은 파생 클래스에서도 접근 불가.  
 
 ::left::
 
