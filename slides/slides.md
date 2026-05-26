@@ -104,3 +104,7 @@ src: ./pages/polymorphism.md
 ---
 src: ./pages/cpp-function-pointer.md
 ---
+
+---
+src: ./pages/cpp-template.md
+---
