@@ -18,16 +18,22 @@ layout: two-cols-header
 ### 타입별로 각각 작성
 
 ```cpp {}
-void swap_int(int& a, int& b) {
-  int tmp = a; a = b; b = tmp;
+void swap(int& a, int& b) {
+  int tmp = a; 
+  a = b; 
+  b = tmp;
 }
 
-void swap_double(double& a, double& b) {
-  double tmp = a; a = b; b = tmp;
+void swap(double& a, double& b) {
+  double tmp = a; 
+  a = b; 
+  b = tmp;
 }
 
-void swap_str(std::string& a, std::string& b) {
-  std::string tmp = a; a = b; b = tmp;
+void swap(std::string& a, std::string& b) {
+  std::string tmp = a;
+  a = b; 
+  b = tmp;
 }
 ```
 
@@ -121,12 +127,12 @@ void swap(T& a, T& b) {
 
 - 두 선언은 **완전히 동등**하다
 - 어떤 타입이든 전달 가능 (`int`, `double`, 클래스 모두)
+- `class`는 클래스 타입만 받을 것 같은 **오해**를 준다.
 
 ::right::
 
-### 왜 `typename`이 더 정확한가
+### `typename T` 사용을 권장
 
-`class`는 클래스 타입만 받을 것 같은 **오해**를 준다.
 
 ```cpp {}
 template<class T>     // ← T가 클래스여야만 할 것 같다
@@ -136,7 +142,7 @@ max_val(3, 5);        // T = int    — 기본 타입도 OK
 max_val(3.14, 2.72);  // T = double — 기본 타입도 OK
 ```
 
-`typename`은 **"어떤 타입이든"** 이라는 의도를 명확히 전달한다.
+`typename`은 **"어떤 타입이든"** 이라는 의도를 명확히 전달.
 
 | | `class T` | `typename T` |
 |---|---|---|
@@ -165,12 +171,12 @@ void swap(T& a, T& b) {
   T tmp = a; a = b; b = tmp;
 }
 
-// swap(x, y)  호출 시 → 컴파일러 자동 생성
+// T = int 로 호출 시 → 컴파일러 자동 생성
 void swap(int& a, int& b) {
   int tmp = a; a = b; b = tmp;
 }
 
-// swap(p, q)  호출 시 → 컴파일러 자동 생성
+// T = double 로 호출 시 → 컴파일러 자동 생성
 void swap(double& a, double& b) {
   double tmp = a; a = b; b = tmp;
 }
@@ -200,9 +206,9 @@ max_val<double>(3, 5);   // T = double
 layout: two-cols-header
 ---
 
-# 여러 타입 매개변수
+# 여러 템플릿 매개변수
 
-`template<typename T, typename U>`처럼 **타입 매개변수를 여러 개** 사용할 수 있다.
+템플릿 매개변수는 **타입(`typename T`)** 뿐만 아니라 **정수 값(`int N`)** 도 될 수 있다.
 
 ::left::
 
@@ -231,24 +237,31 @@ A, 65
 
 ::right::
 
-### 반환 타입이 두 타입 중 하나인 경우
+### 타입 + 값을 함께 받는 함수 템플릿
 
 ```cpp {}
-// C++11: decltype으로 반환 타입 추론
-template<typename T, typename U>
-auto add(T a, U b) -> decltype(a + b) {
-  return a + b;
+#include <iostream>
+
+// T: 타입 매개변수,  N: 정수 값 매개변수
+template<typename T, int N>
+void repeat(T val) {
+  for (int i = 0; i < N; i++)
+    std::cout << val << "\n";
 }
 
-// C++14 이후: auto만으로 가능
-template<typename T, typename U>
-auto add2(T a, U b) {
-  return a + b;
-}
+int main() {
+  repeat<std::string, 3>("hello");
+  // hello
+  // hello
+  // hello
 
-std::cout << add(1, 2.5);   // 3.5 (double)
-std::cout << add('A', 1);   // 66  (int)
+  repeat<int, 2>(42);
+  // 42
+  // 42
+}
 ```
+
+> `N`은 컴파일 타임에 결정되는 **상수** — 런타임 변수는 전달할 수 없다.
 
 ---
 layout: section
@@ -318,7 +331,7 @@ layout: two-cols-header
 
 ::left::
 
-### Stack<T> 구현
+### `Stack<T>` 구현
 
 ```cpp {}
 #include <vector>
@@ -373,116 +386,120 @@ std::cout << ss.top();   // world
 layout: two-cols-header
 ---
 
-# 비타입 템플릿 매개변수
+# 비타입 템플릿 매개변수 — Vector · Matrix
 
-타입 뿐만 아니라 **정수 값도** 템플릿 매개변수로 쓸 수 있다.
+크기를 **컴파일 타임 상수**로 고정하는 `Vector`와 `Matrix` 클래스를 구현한다.
 
 ::left::
 
-### 크기가 고정된 배열 클래스
+### Vector\<T, N\> 클래스
 
 ```cpp {}
 template<typename T, int N>
-class Array {
-  T data[N];            // N은 컴파일 타임 상수
+class Vector {
+  T data[N] = {};        // N: 컴파일 타임 크기, 0 초기화
 public:
-  T&       operator[](int i)       { return data[i]; }
-  const T& operator[](int i) const { return data[i]; }
+  T&       operator()(int i)       { return data[i]; }
+  const T& operator()(int i) const { return data[i]; }
   int size() const { return N; }
 };
 
-int main() {
-  Array<int, 5> arr;    // int[5] 고정 크기
-  for (int i = 0; i < arr.size(); i++)
-    arr[i] = i * 10;
-  // 0 10 20 30 40
+// int형 3차원 벡터
+Vector<int, 3> v;
+v(0) = 1; v(1) = 2; v(2) = 3;
 
-  Array<double, 3> da;
-  da[0] = 1.1; da[1] = 2.2; da[2] = 3.3;
-}
+// float형 2차원 벡터
+Vector<float, 2> vf;
+vf(0) = 1.5f; vf(1) = 2.5f;
 ```
 
 ::right::
 
-### std::array — 표준 라이브러리 구현
-
-표준 라이브러리의 `std::array<T, N>`이 이 패턴으로 구현된다.
+### Matrix\<T, R, C\> 클래스
 
 ```cpp {}
-#include <array>
-#include <algorithm>
+template<typename T, int R, int C>  // R: 행, C: 열
+class Matrix {
+  T data[R][C] = {};
+public:
+  T&       operator()(int r, int c)       { return data[r][c]; }
+  const T& operator()(int r, int c) const { return data[r][c]; }
+  int rows() const { return R; }
+  int cols() const { return C; }
+};
 
-std::array<int, 5> a = {3, 1, 4, 1, 5};
-
-std::sort(a.begin(), a.end());
-// a = {1, 1, 3, 4, 5}
-
-std::cout << a.size();  // 5
+// int형 2×3 행렬
+Matrix<int, 2, 3> A;
+A(0,0)=1; A(0,1)=2; A(0,2)=3;
+A(1,0)=4; A(1,1)=5; A(1,2)=6;
 ```
-
-<br>
-
-| | `T[]` (C 배열) | `std::array<T, N>` |
-|---|---|---|
-| 크기 | 고정 | 고정 |
-| 범위 검사 | 없음 | `at()` 사용 |
-| 반복자 | 없음 | `begin()/end()` |
-| 함수 전달 | 포인터로 decay | 레퍼런스로 전달 |
 
 ---
 layout: two-cols-header
 ---
 
-# 표준 라이브러리와 템플릿
+# Matrix × Vector · Vector × Matrix 곱
 
-STL의 모든 컨테이너와 알고리즘은 **템플릿으로 구현**되어 있다.
+같은 이름 `mul`을 **오버로딩**해 인수 순서만으로 두 방향 곱을 모두 지원한다.
 
 ::left::
 
-### 컨테이너 — 클래스 템플릿
+### 곱셈 함수 템플릿 (오버로딩)
 
 ```cpp {}
-#include <vector>
-#include <map>
-#include <set>
+// ① Matrix × Vector : R×C 행렬 × C차원 벡터 → R차원 벡터
+template<typename T, int R, int C>
+Vector<T, R> mul(const Matrix<T, R, C>& A,
+                 const Vector<T, C>&    v) {
+  Vector<T, R> result;
+  for (int r = 0; r < R; r++)
+    for (int c = 0; c < C; c++)
+      result(r) += A(r, c) * v(c);
+  return result;
+}
 
-// 클래스 템플릿 인스턴스화
-std::vector<int>            vi;   // vector<int>
-std::vector<std::string>    vs;   // vector<string>
-std::map<std::string, int>  mi;   // map<string,int>
-std::set<double>            sd;   // set<double>
-
-// std::pair — 두 타입을 묶는 클래스 템플릿
-std::pair<std::string, int> p = {"score", 95};
-std::cout << p.first;    // score
-std::cout << p.second;   // 95
+// ② Vector × Matrix : R차원 벡터 × R×C 행렬 → C차원 벡터
+template<typename T, int R, int C>
+Vector<T, C> mul(const Vector<T, R>&    v,
+                 const Matrix<T, R, C>& A) {
+  Vector<T, C> result;
+  for (int c = 0; c < C; c++)
+    for (int r = 0; r < R; r++)
+      result(c) += v(r) * A(r, c);
+  return result;
+}
 ```
+
+> 인수 순서(행렬·벡터 vs 벡터·행렬)만으로 컴파일러가 ①②를 자동 선택한다.
 
 ::right::
 
-### 알고리즘 — 함수 템플릿
+### int형 · float형으로 활용
 
 ```cpp {}
-#include <algorithm>
-#include <numeric>
-#include <vector>
+// ── int형 ─────────────────────────────
+Matrix<int, 2, 3> A;
+A(0,0)=1; A(0,1)=2; A(0,2)=3;
+A(1,0)=4; A(1,1)=5; A(1,2)=6;
 
-std::vector<int> v = {3, 1, 4, 1, 5, 9};
+Vector<int, 3> v;
+v(0)=1; v(1)=2; v(2)=3;
 
-// 함수 템플릿 — 타입 자동 추론
-std::sort(v.begin(), v.end());
-// v = {1, 1, 3, 4, 5, 9}
+Vector<int, 2> r = mul(A, v);
+// r(0) = 1×1 + 2×2 + 3×3 = 14
+// r(1) = 4×1 + 5×2 + 6×3 = 32
 
-auto it = std::find(v.begin(), v.end(), 4);
-// it → v[2] (값 4의 위치)
+// ── float형 — typename만 바꿔 재사용 ──
+Matrix<float, 2, 3> B;
+B(0,0)=0.5f; B(0,1)=1.0f; B(0,2)=1.5f;
+B(1,0)=2.0f; B(1,1)=2.5f; B(1,2)=3.0f;
 
-int s = std::accumulate(v.begin(), v.end(), 0);
-// s = 23
+Vector<float, 3> vf;
+vf(0)=1.0f; vf(1)=2.0f; vf(2)=3.0f;
 
-// 같은 템플릿, 다른 타입으로도 동작
-std::vector<std::string> words = {"banana", "apple"};
-std::sort(words.begin(), words.end());
-// words = {"apple", "banana"}
+Vector<float, 2> rf = mul(B, vf);
+// rf(0) = 0.5 + 2.0 + 4.5 = 7.0
+// rf(1) = 2.0 + 5.0 + 9.0 = 16.0
 ```
 
 ---
