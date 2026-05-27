@@ -21,7 +21,13 @@
       "WebFetch(domain:app.netlify.com)",
       "WebFetch(domain:slidev-cpp.netlify.app)",
       "Bash(pnpm run *)",
-      "PowerShell(git *)"
+      "PowerShell(git *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\dev\\\\source\\\\repos\\\\slidev-cpp\\\\slides\\\\pages\" -File)",
+      "Bash(Select-Object Name)",
+      "Bash(g++ --version)",
+      "Bash(/c/msys64/ucrt64/bin/g++ --version)",
+      "Bash(pwd -W)",
+      "Bash(echo \"Bash /tmp = $\\(cd /tmp && pwd -W\\)\")"
     ]
   }
 }
