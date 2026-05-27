@@ -432,74 +432,6 @@ A(1,0)=4; A(1,1)=5; A(1,2)=6;
 layout: two-cols-header
 ---
 
-# Matrix × Vector, Vector × Matrix 곱 — `operator*`
-
-`operator*`를 **오버로딩**해 인수 순서만으로 두 방향 곱을 모두 지원한다.
-
-::left::
-
-### `operator*` 함수 템플릿 (오버로딩)
-
-```cpp {}
-// ① Matrix × Vector : R×C 행렬 × C차원 벡터 → R차원 벡터
-template<typename T, int R, int C>
-Vector<T, R> operator*(const Matrix<T, R, C>& A,
-                       const Vector<T, C>&    v) {
-  Vector<T, R> result;
-  for (int r = 0; r < R; r++)
-    for (int c = 0; c < C; c++)
-      result(r) += A(r, c) * v(c);
-  return result;
-}
-
-// ② Vector × Matrix : R차원 벡터 × R×C 행렬 → C차원 벡터
-template<typename T, int R, int C>
-Vector<T, C> operator*(const Vector<T, R>&    v,
-                       const Matrix<T, R, C>& A) {
-  Vector<T, C> result;
-  for (int c = 0; c < C; c++)
-    for (int r = 0; r < R; r++)
-      result(c) += v(r) * A(r, c);
-  return result;
-}
-```
-
-> 인수 순서(행렬·벡터 vs 벡터·행렬)만으로 컴파일러가 ①②를 자동 선택한다.
-
-::right::
-
-### int형 · float형으로 활용
-
-```cpp {}
-// ── int형 ─────────────────────────────
-Matrix<int, 2, 3> A;
-A(0,0)=1; A(0,1)=2; A(0,2)=3;
-A(1,0)=4; A(1,1)=5; A(1,2)=6;
-
-Vector<int, 3> v;
-v(0)=1; v(1)=2; v(2)=3;
-
-Vector<int, 2> r = A * v;   // operator*(A, v)
-// r(0) = 1×1 + 2×2 + 3×3 = 14
-// r(1) = 4×1 + 5×2 + 6×3 = 32
-
-// ── float형 — typename만 바꿔 재사용 ──
-Matrix<float, 2, 3> B;
-B(0,0)=0.5f; B(0,1)=1.0f; B(0,2)=1.5f;
-B(1,0)=2.0f; B(1,1)=2.5f; B(1,2)=3.0f;
-
-Vector<float, 3> vf;
-vf(0)=1.0f; vf(1)=2.0f; vf(2)=3.0f;
-
-Vector<float, 2> rf = B * vf;  // operator*(B, vf)
-// rf(0) = 0.5 + 2.0 + 4.5 = 7.0
-// rf(1) = 2.0 + 5.0 + 9.0 = 16.0
-```
-
----
-layout: two-cols-header
----
-
 # `typedef` / `using` — 긴 타입 이름에 별칭 붙이기
 
 템플릿으로 만든 타입은 `<>` 인수가 붙어 길어진다. **별칭**을 붙이면 더 간결하게 쓸 수 있다.
@@ -555,6 +487,79 @@ std::cout << s.top();   // 20
 > 별칭은 **새 타입이 아닌** 기존 타입의 다른 이름 — 원래 타입과 혼용 가능.
 
 <!-- typedef와 using alias 모두 소개. using이 현대 C++ 권장 이유(가독성, alias template 지원) 설명. 별칭은 새 타입이 아니라는 점 강조. -->
+
+---
+layout: two-cols-header
+---
+
+# Matrix × Vector, Vector × Matrix 곱 — `operator*`
+
+`operator*`를 **오버로딩**해 인수 순서만으로 두 방향 곱을 모두 지원한다.
+
+::left::
+
+### `operator*` 함수 템플릿 (오버로딩)
+
+```cpp {}
+// ① Matrix × Vector : R×C 행렬 × C차원 벡터 → R차원 벡터
+template<typename T, int R, int C>
+Vector<T, R> operator*(const Matrix<T, R, C>& A,
+                       const Vector<T, C>&    v) {
+  Vector<T, R> result;
+  for (int r = 0; r < R; r++)
+    for (int c = 0; c < C; c++)
+      result(r) += A(r, c) * v(c);
+  return result;
+}
+
+// ② Vector × Matrix : R차원 벡터 × R×C 행렬 → C차원 벡터
+template<typename T, int R, int C>
+Vector<T, C> operator*(const Vector<T, R>&    v,
+                       const Matrix<T, R, C>& A) {
+  Vector<T, C> result;
+  for (int c = 0; c < C; c++)
+    for (int r = 0; r < R; r++)
+      result(c) += v(r) * A(r, c);
+  return result;
+}
+```
+
+> 인수 순서(행렬·벡터 vs 벡터·행렬)만으로 컴파일러가 ①②를 자동 선택한다.
+
+::right::
+
+### `using` 별칭으로 깔끔하게
+
+```cpp {}
+using Mat23i = Matrix<int, 2, 3>;
+using Vec3i  = Vector<int, 3>;
+using Vec2i  = Vector<int, 2>;
+using Mat23f = Matrix<float, 2, 3>;
+using Vec3f  = Vector<float, 3>;
+using Vec2f  = Vector<float, 2>;
+
+// ── int형 ─────────────────────────────
+Mat23i A;
+A(0,0)=1; A(0,1)=2; A(0,2)=3;
+A(1,0)=4; A(1,1)=5; A(1,2)=6;
+
+Vec3i v;
+v(0)=1; v(1)=2; v(2)=3;
+
+Vec2i r = A * v;
+// r(0) = 14,  r(1) = 32
+
+// ── float형 ───────────────────────────
+Mat23f B;
+B(0,0)=0.5f; B(0,1)=1.0f; B(0,2)=1.5f;
+B(1,0)=2.0f; B(1,1)=2.5f; B(1,2)=3.0f;
+
+Vec3f vf;
+vf(0)=1.0f; vf(1)=2.0f; vf(2)=3.0f;
+
+Vec2f rf = B * vf;
+// rf(0) = 7.0,  rf(1) = 16.0
+```
 
 ---
 layout: default
