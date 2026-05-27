@@ -264,12 +264,6 @@ int main() {
 > `N`은 컴파일 타임에 결정되는 **상수** — 런타임 변수는 전달할 수 없다.
 
 ---
-layout: section
----
-
-# 클래스 템플릿
-
----
 layout: two-cols-header
 ---
 
@@ -386,7 +380,7 @@ std::cout << ss.top();   // world
 layout: two-cols-header
 ---
 
-# 비타입 템플릿 매개변수 — Vector · Matrix
+# 비타입 템플릿 매개변수 — Vector, Matrix
 
 크기를 **컴파일 타임 상수**로 고정하는 `Vector`와 `Matrix` 클래스를 구현한다.
 
@@ -438,7 +432,7 @@ A(1,0)=4; A(1,1)=5; A(1,2)=6;
 layout: two-cols-header
 ---
 
-# Matrix × Vector · Vector × Matrix 곱
+# Matrix × Vector, Vector × Matrix 곱
 
 같은 이름 `mul`을 **오버로딩**해 인수 순서만으로 두 방향 곱을 모두 지원한다.
 
@@ -501,6 +495,66 @@ Vector<float, 2> rf = mul(B, vf);
 // rf(0) = 0.5 + 2.0 + 4.5 = 7.0
 // rf(1) = 2.0 + 5.0 + 9.0 = 16.0
 ```
+
+---
+layout: two-cols-header
+---
+
+# `typedef` / `using` — 긴 타입 이름에 별칭 붙이기
+
+템플릿으로 만든 타입은 `<>` 인수가 붙어 길어진다. **별칭**을 붙이면 더 간결하게 쓸 수 있다.
+
+::left::
+
+### `typedef` — C++ 전통 방식
+
+```cpp {}
+typedef Vector<int, 2>      Vec2i;
+typedef Vector<float, 3>    Vec3f;
+typedef Matrix<float, 4, 4> Mat4f;
+typedef Stack<int>          IntStack;
+```
+
+### `using` — C++11 타입 별칭 <span class="text-sm text-gray-400">권장</span>
+
+```cpp {}
+using Vec2i    = Vector<int, 2>;
+using Vec3f    = Vector<float, 3>;
+using Mat4f    = Matrix<float, 4, 4>;
+using IntStack = Stack<int>;
+```
+
+> `using`은 의미가 **왼쪽 = 오른쪽** 구조라 읽기 쉽고,
+> `typedef`로는 불가능한 **템플릿 별칭**도 만들 수 있다.
+
+::right::
+
+### 별칭을 쓰면 코드가 깔끔해진다
+
+```cpp {}
+// 별칭 없이 사용할 경우, 복잡함.
+Vector<int, 2> a, b;
+Matrix<float, 4, 4> A;
+
+// 별칭을 사용하면 코드가 깔끔함.
+Vec2i x, y;
+Mat4f M;
+
+a(0) = 1; a(1) = 2;
+b(0) = 3; b(1) = 4;
+
+Vec3f v;
+v(0) = 1.0f; v(1) = 2.0f; v(2) = 3.0f;
+
+IntStack s;
+s.push(10);
+s.push(20);
+std::cout << s.top();   // 20
+```
+
+> 별칭은 **새 타입이 아닌** 기존 타입의 다른 이름 — 원래 타입과 혼용 가능.
+
+<!-- typedef와 using alias 모두 소개. using이 현대 C++ 권장 이유(가독성, alias template 지원) 설명. 별칭은 새 타입이 아니라는 점 강조. -->
 
 ---
 layout: default
