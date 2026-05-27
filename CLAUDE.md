@@ -17,6 +17,30 @@ pnpm build          # Production build → dist/ (base path: /slidev-cpp)
 pnpm export         # Export slides to PDF
 ```
 
+## 웹 개시 (배포) 절차
+
+사용자가 **"웹에 개시"**, **"배포"**, **"홈페이지에 올려"** 등 웹 게시 의도를 표현하면, 아래 순서를 정확히 따른다. 소스만 커밋하는 일반 커밋과 혼동하지 않는다.
+
+모든 명령은 `slides/` 디렉터리에서 실행한다.
+
+```bash
+# 1. 프로덕션 빌드 (출력: slides/dist/)
+pnpm run build
+
+# 2. 기존 docs 폴더 삭제
+rm -rf ../docs
+
+# 3. 빌드 결과물을 docs 로 이동
+mv dist ../docs
+
+# 4. 변경 사항 전체 커밋 & 푸시
+git add -A
+git commit -m "docs: 슬라이드 배포 빌드 업데이트"
+git push
+```
+
+> **주의**: 이 절차는 `docs/`를 완전히 교체한다. 빌드 오류가 발생하면 2~4단계를 실행하지 않는다.
+
 ## Architecture
 
 ### Repository layout
