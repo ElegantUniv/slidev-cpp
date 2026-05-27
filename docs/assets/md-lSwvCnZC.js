@@ -1,0 +1,8 @@
+import{_ as i}from"./slidev/CodeBlockWrapper.vue_vue_type_script_setup_true_lang-CmGP9OY7.js";import{o as p,b as u,w as n,g as s,d as m,m as c,D as e,v as d,x as f,z as l}from"./modules/vue-3CrVM1oy.js";import{I as g}from"./slidev/default-BDtIUPvm.js";import{u as k,f as C}from"./slidev/context-D5RKgiOA.js";import"./modules/unplugin-icons-BExRMqN9.js";import"./index-BRpgbF9k.js";import"./modules/shiki-B-6FJwZY.js";const I={__name:"cpp-history.md__slidev_13",setup(_){const{$clicksContext:t,$frontmatter:o}=k();return t.setup(),(h,a)=>{const r=i;return p(),u(g,d(f(l(C)(l(o),12))),{default:n(()=>[a[1]||(a[1]=s("h1",null,"C++로의 진화",-1)),m(r,c({},{title:"",ranges:[]}),{default:n(()=>[...a[0]||(a[0]=[s("pre",{class:"shiki shiki-themes vitesse-dark vitesse-light slidev-code",style:{"--shiki-dark":"#dbd7caee","--shiki-light":"#393a34","--shiki-dark-bg":"#121212","--shiki-light-bg":"#ffffff"}},[s("code",{class:"language-text"},[s("span",{class:"line"},[s("span",null,'1979  "C with Classes" 개발 시작 (Bjarne Stroustrup)')]),e(`
+`),s("span",{class:"line"},[s("span",null," │")]),e(`
+`),s("span",{class:"line"},[s("span",null,'1983  정식 명칭 "C++" 으로 변경')]),e(`
+`),s("span",{class:"line"},[s("span",null,'      (++ 는 C의 증가 연산자, "C를 한 단계 발전시킨 언어")')]),e(`
+`),s("span",{class:"line"},[s("span",null," │")]),e(`
+`),s("span",{class:"line"},[s("span",null,'1985  "The C++ Programming Language" 초판 출판')]),e(`
+`),s("span",{class:"line"},[s("span",null," │")]),e(`
+`),s("span",{class:"line"},[s("span",null,"1998  C++98 — 최초의 ISO 국제 표준")])])],-1)])]),_:1},16),a[2]||(a[2]=s("blockquote",null,[s("p",null,[e("💡 "),s("code",null,"++"),e("는 증가 연산자 — "),s("em",null,'"C보다 한 단계 나아간 언어"'),e(" 라는 의미를 담고 있습니다.")])],-1))]),_:1},16)}}};export{I as default};

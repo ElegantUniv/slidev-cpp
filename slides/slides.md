@@ -108,3 +108,23 @@ src: ./pages/cpp-function-pointer.md
 ---
 src: ./pages/cpp-template.md
 ---
+
+---
+src: ./pages/stl-overview.md
+---
+
+---
+src: ./pages/stl-sequence.md
+---
+
+---
+src: ./pages/stl-associative.md
+---
+
+---
+src: ./pages/stl-iterators.md
+---
+
+---
+src: ./pages/stl-algorithms.md
+---
