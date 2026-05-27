@@ -501,7 +501,7 @@ layout: two-cols-header
 ### `operator*` 함수 템플릿 (오버로딩)
 
 ```cpp {}
-// ① Matrix × Vector : R×C 행렬 × C차원 벡터 → R차원 벡터
+// 1) Matrix × Vector : R×C 행렬 × C차원 벡터 → R차원 벡터
 template<typename T, int R, int C>
 Vector<T, R> operator*(const Matrix<T, R, C>& A,
                        const Vector<T, C>&    v) {
@@ -512,7 +512,7 @@ Vector<T, R> operator*(const Matrix<T, R, C>& A,
   return result;
 }
 
-// ② Vector × Matrix : R차원 벡터 × R×C 행렬 → C차원 벡터
+// 2) Vector × Matrix : R차원 벡터 × R×C 행렬 → C차원 벡터
 template<typename T, int R, int C>
 Vector<T, C> operator*(const Vector<T, R>&    v,
                        const Matrix<T, R, C>& A) {
@@ -524,7 +524,7 @@ Vector<T, C> operator*(const Vector<T, R>&    v,
 }
 ```
 
-> 인수 순서(행렬·벡터 vs 벡터·행렬)만으로 컴파일러가 ①②를 자동 선택한다.
+> 인수 순서(행렬·벡터 vs 벡터·행렬)만으로 컴파일러가 1),2)를 자동 선택.
 
 ::right::
 
@@ -546,8 +546,7 @@ A(1,0)=4; A(1,1)=5; A(1,2)=6;
 Vec3i v;
 v(0)=1; v(1)=2; v(2)=3;
 
-Vec2i r = A * v;
-// r(0) = 14,  r(1) = 32
+Vec2i r = A * v;      // r(0) = 14,  r(1) = 32
 
 // ── float형 ───────────────────────────
 Mat2x3f B;
@@ -557,8 +556,7 @@ B(1,0)=2.0f; B(1,1)=2.5f; B(1,2)=3.0f;
 Vec3f vf;
 vf(0)=1.0f; vf(1)=2.0f; vf(2)=3.0f;
 
-Vec2f rf = B * vf;
-// rf(0) = 7.0,  rf(1) = 16.0
+Vec2f rf = B * vf;    // rf(0) = 7.0,  rf(1) = 16.0
 ```
 
 ---
@@ -574,8 +572,7 @@ layout: default
 | 타입 추론 | `f(x)` — 인수에서 자동 결정 | 함수 템플릿에서 편리하게 |
 | 명시적 지정 | `f<int>(x)` | 추론이 안 되거나 명확히 할 때 |
 | 비타입 매개변수 | `template<typename T, int N>` | 컴파일 타임 상수 값 전달 |
-| 타입 별칭 (`typedef`) | `typedef Vector<int,2> Vec2i;` | 긴 템플릿 타입에 짧은 이름 |
-| 타입 별칭 (`using`) | `using Vec2i = Vector<int,2>;` | 同위, C++11 권장 방식 |
+| 타입 별칭 (`using`) | `using Vec2i = Vector<int,2>;` | 긴 템플릿 타입에 짧은 이름 (C++11 권장) |
 | 연산자 오버로딩 | `operator*(A, v)` → `A * v` | 템플릿과 결합해 자연스러운 표현 |
 | 인스턴스화 | 컴파일러 자동 생성 | 각 타입 조합마다 별개 코드 |
 
@@ -584,5 +581,4 @@ layout: default
 ### 핵심 원칙
 
 - 템플릿은 **설계도** — 사용 시점에 컴파일러가 구체적인 코드를 생성한다
-- 함수 템플릿은 **타입 추론** 가능, 클래스 템플릿은 **명시 필요** (C++17 이전)
 - STL의 모든 컨테이너·알고리즘이 **템플릿으로 구현**됨 — 우리가 이미 사용해왔다
