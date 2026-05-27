@@ -432,19 +432,19 @@ A(1,0)=4; A(1,1)=5; A(1,2)=6;
 layout: two-cols-header
 ---
 
-# Matrix × Vector, Vector × Matrix 곱
+# Matrix × Vector, Vector × Matrix 곱 — `operator*`
 
-같은 이름 `mul`을 **오버로딩**해 인수 순서만으로 두 방향 곱을 모두 지원한다.
+`operator*`를 **오버로딩**해 인수 순서만으로 두 방향 곱을 모두 지원한다.
 
 ::left::
 
-### 곱셈 함수 템플릿 (오버로딩)
+### `operator*` 함수 템플릿 (오버로딩)
 
 ```cpp {}
 // ① Matrix × Vector : R×C 행렬 × C차원 벡터 → R차원 벡터
 template<typename T, int R, int C>
-Vector<T, R> mul(const Matrix<T, R, C>& A,
-                 const Vector<T, C>&    v) {
+Vector<T, R> operator*(const Matrix<T, R, C>& A,
+                       const Vector<T, C>&    v) {
   Vector<T, R> result;
   for (int r = 0; r < R; r++)
     for (int c = 0; c < C; c++)
@@ -454,8 +454,8 @@ Vector<T, R> mul(const Matrix<T, R, C>& A,
 
 // ② Vector × Matrix : R차원 벡터 × R×C 행렬 → C차원 벡터
 template<typename T, int R, int C>
-Vector<T, C> mul(const Vector<T, R>&    v,
-                 const Matrix<T, R, C>& A) {
+Vector<T, C> operator*(const Vector<T, R>&    v,
+                       const Matrix<T, R, C>& A) {
   Vector<T, C> result;
   for (int c = 0; c < C; c++)
     for (int r = 0; r < R; r++)
@@ -479,7 +479,7 @@ A(1,0)=4; A(1,1)=5; A(1,2)=6;
 Vector<int, 3> v;
 v(0)=1; v(1)=2; v(2)=3;
 
-Vector<int, 2> r = mul(A, v);
+Vector<int, 2> r = A * v;   // operator*(A, v)
 // r(0) = 1×1 + 2×2 + 3×3 = 14
 // r(1) = 4×1 + 5×2 + 6×3 = 32
 
@@ -491,7 +491,7 @@ B(1,0)=2.0f; B(1,1)=2.5f; B(1,2)=3.0f;
 Vector<float, 3> vf;
 vf(0)=1.0f; vf(1)=2.0f; vf(2)=3.0f;
 
-Vector<float, 2> rf = mul(B, vf);
+Vector<float, 2> rf = B * vf;  // operator*(B, vf)
 // rf(0) = 0.5 + 2.0 + 4.5 = 7.0
 // rf(1) = 2.0 + 5.0 + 9.0 = 16.0
 ```
@@ -569,6 +569,7 @@ layout: default
 | 타입 추론 | `f(x)` — 인수에서 자동 결정 | 함수 템플릿에서 편리하게 |
 | 명시적 지정 | `f<int>(x)` | 추론이 안 되거나 명확히 할 때 |
 | 비타입 매개변수 | `template<typename T, int N>` | 컴파일 타임 상수 값 전달 |
+| 연산자 오버로딩 | `operator*(A, v)` → `A * v` | 템플릿과 결합해 자연스러운 표현 |
 | 인스턴스화 | 컴파일러 자동 생성 | 각 타입 조합마다 별개 코드 |
 
 <br>
