@@ -9,6 +9,52 @@ layout: cover
 layout: two-cols-header
 ---
 
+# 순회 문제 — 컨테이너마다 다른가?
+
+`vector`와 `list`는 내부 구조가 완전히 다르다. 그런데 어떻게 **같은 방식**으로 순회할 수 있을까?
+
+::left::
+
+## `std::vector` 순회
+
+```cpp {}
+std::vector<int> v = {10, 20, 30, 40, 50};
+
+// 이터레이터 for 루프
+for (auto it = v.begin(); it != v.end(); ++it) {
+    std::cout << *it << " ";   // 10 20 30 40 50
+}
+
+// 범위 기반 for (내부적으로 begin/end 호출)
+for (const auto& x : v) {
+    std::cout << x << " ";   // 10 20 30 40 50
+}
+```
+
+::right::
+
+## `std::list` 순회
+
+```cpp {}
+std::list<int> lst = {10, 20, 30, 40, 50};
+
+// 문법이 vector와 완전히 동일
+for (auto it = lst.begin(); it != lst.end(); ++it) {
+    std::cout << *it << " ";   // 10 20 30 40 50
+}
+
+// 범위 기반 for
+for (const auto& x : lst) {
+    std::cout << x << " ";   // 10 20 30 40 50
+}
+```
+
+> 내부 구조는 달라도 **순회 코드는 동일** — 이것이 **이터레이터** 덕분이다.
+
+---
+layout: two-cols-header
+---
+
 # 이터레이터란?
 
 이터레이터는 **컨테이너의 원소를 가리키는 객체**다. 포인터와 유사한 인터페이스를 제공하며, 컨테이너 종류와 무관하게 **동일한 방식으로 순회**할 수 있다.
@@ -54,14 +100,14 @@ for (auto it = v.begin(); it != v.end(); ++it) {
 }
 ```
 
-```
+> `end()`는 마지막 원소의 **다음 위치**를 가리키며,
+> 역참조(`*end()`)는 **미정의 동작**이다.
+
+```txt {}
  begin()          end()
    ↓                ↓
 [ 10 | 20 | 30 | × ]
 ```
-
-> `end()`는 마지막 원소의 **다음 위치**를 가리키며,
-> 역참조(`*end()`)는 **미정의 동작**이다.
 
 ---
 layout: two-cols-header
@@ -105,30 +151,29 @@ if (it != v.end()) {          // end() == nullptr 역할
 
 ::right::
 
-## `end()`를 반환하는 대표 상황
+## `end()` 반환 패턴 — vector / list
 
 ```cpp {}
 std::vector<int> v = {10, 20, 30};
-std::map<std::string, int> m = {{"Alice", 95}};
-std::set<int> s = {10, 20, 30};
+std::list<int> lst = {10, 20, 30};
 
-// ① std::find — 값이 없으면 end() 반환
+// ① vector: 값이 없으면 end() 반환
 auto it1 = std::find(v.begin(), v.end(), 99);
 if (it1 == v.end()) std::cout << "없음\n";
 
-// ② map::find — 키가 없으면 end() 반환
-auto it2 = m.find("Bob");
-if (it2 == m.end()) std::cout << "키 없음\n";
-else std::cout << it2->second;
-
-// ③ set::find — 값이 없으면 end() 반환
-auto it3 = s.find(99);
-if (it3 == s.end()) std::cout << "없음\n";
-
-// ④ std::find_if — 조건 불만족 시 end() 반환
-auto it4 = std::find_if(v.begin(), v.end(),
+// ② vector: 조건 불만족 시 end() 반환
+auto it2 = std::find_if(v.begin(), v.end(),
     [](int x){ return x > 100; });
-if (it4 == v.end()) std::cout << "조건 불만족\n";
+if (it2 == v.end()) std::cout << "조건 불만족\n";
+
+// ③ list도 동일한 패턴
+auto it3 = std::find(lst.begin(), lst.end(), 99);
+if (it3 == lst.end()) std::cout << "없음\n";
+
+// ④ list: 조건으로 검색
+auto it4 = std::find_if(lst.begin(), lst.end(),
+    [](int x){ return x > 100; });
+if (it4 == lst.end()) std::cout << "조건 불만족\n";
 ```
 
 <br>
@@ -210,34 +255,30 @@ for (const auto& x : v) {
 
 ::right::
 
-## 모든 컨테이너에 적용 가능
+## list / array / string에도 적용 가능
 
 ```cpp {}
-// set
-std::set<std::string> names = {"Charlie", "Alice", "Bob"};
-for (const auto& name : names) {
-    std::cout << name << "\n";
-    // Alice   ← 정렬 순서
-    // Bob
-    // Charlie
-}
-
-// map
-std::map<std::string, int> score = {
-    {"Alice", 95}, {"Bob", 88}
-};
-for (const auto& [name, s] : score) {   // C++17
-    std::cout << name << ": " << s << "\n";
+// list — vector와 완전히 동일한 구문
+std::list<int> lst = {10, 20, 30};
+for (const auto& x : lst) {
+    std::cout << x << " ";   // 10 20 30
 }
 
 // array
 std::array<int, 3> arr = {1, 2, 3};
 for (const auto& x : arr) {
-    std::cout << x << " ";
+    std::cout << x << " ";   // 1 2 3
+}
+
+// string (char 단위 순회)
+std::string s = "hello";
+for (char c : s) {
+    std::cout << c << " ";   // h e l l o
 }
 ```
 
 > 범위 기반 for는 내부적으로 `begin()` / `end()`를 호출한다.
+> `set`, `map` 등 연관 컨테이너도 같은 구문 — 연관 컨테이너 단원에서 다룬다.
 
 ---
 layout: two-cols-header
@@ -283,9 +324,9 @@ for (auto it = v.rbegin(); it != v.rend(); ++it) {
     // 50 40 30 20 10
 }
 
-// set도 역방향 순회 가능
-std::set<int> s = {10, 20, 30};
-for (auto it = s.rbegin(); it != s.rend(); ++it) {
+// list도 역방향 순회 가능
+std::list<int> lst = {10, 20, 30};
+for (auto it = lst.rbegin(); it != lst.rend(); ++it) {
     std::cout << *it << " ";  // 30 20 10
 }
 ```

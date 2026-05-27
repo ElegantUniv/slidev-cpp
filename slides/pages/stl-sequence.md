@@ -2,14 +2,8 @@
 layout: cover
 ---
 
-# C++ 프로그래밍
-## 시퀀스 컨테이너 (Sequence Containers)
-
----
-layout: section
----
-
 # `std::vector`
+## 동적 연속 메모리 공간의 시퀀스 컨테이너
 
 ---
 layout: two-cols-header
@@ -59,65 +53,6 @@ v.back();          // 30 — 마지막 원소
 v.pop_back();      // v: {10, 20}
 ```
 
----
-layout: two-cols-header
----
-
-# `std::vector` — 이터레이터와 순회
-
-**이터레이터**는 컨테이너의 원소를 가리키는 객체다. 포인터처럼 동작하며, STL 알고리즘은 이터레이터를 통해 컨테이너에 접근한다.
-
-::left::
-
-## `begin()` / `end()`
-
-```
-  v.begin()               v.end()
-      ↓                       ↓
-  [ 10 | 20 | 30 | 40 | 50 | × ]
-```
-
-```cpp {}
-std::vector<int> v = {10, 20, 30, 40, 50};
-
-auto it = v.begin();   // 첫 원소를 가리킴
-*it;                   // 10 — 역참조
-++it;                  // 다음 원소로 이동
-*it;                   // 20
-
-// 이터레이터 for 루프
-for (auto it = v.begin(); it != v.end(); ++it) {
-    std::cout << *it << " ";   // 10 20 30 40 50
-}
-```
-
-> `end()`는 마지막 **다음** 위치 — 역참조 불가.
-
-::right::
-
-## 범위 기반 for (range-based for)
-
-이터레이터를 명시하지 않아도 순회할 수 있다. 내부적으로 `begin()` / `end()`를 호출한다.
-
-```cpp {}
-std::vector<int> v = {10, 20, 30, 40, 50};
-
-// 값 복사 — 원본 변경 안 됨
-for (int x : v) {
-    std::cout << x << " ";   // 10 20 30 40 50
-}
-
-// const 참조 — 읽기, 복사 비용 없음 ← 권장
-for (const auto& x : v) {
-    std::cout << x << " ";
-}
-
-// 참조 — 원본 수정 가능
-for (auto& x : v) {
-    x *= 2;
-}
-// v: {20, 40, 60, 80, 100}
-```
 
 ---
 layout: two-cols-header
@@ -442,10 +377,11 @@ v.clear();          // v: {}  (size=0, capacity 유지)
 > 원소 수를 미리 알면 `reserve()`로 재할당을 방지해 성능을 높인다.
 
 ---
-layout: section
+layout: cover
 ---
 
 # `std::list`
+## '이중 연결 리스트' 구조의 시퀀스 컨테이너
 
 ---
 layout: two-cols-header
@@ -500,61 +436,6 @@ lst.empty();          // false
 > `push_front` / `pop_front`는 `vector`에 없는 기능이다.
 > 앞·뒤 모두 **O(1)**이다.
 
----
-layout: two-cols-header
----
-
-# `std::list` — 이터레이터: Bidirectional
-
-`list`의 이터레이터는 **양방향(Bidirectional)**이다. `++`, `--`는 가능하지만, `+n`·`[]` 같은 임의 접근은 불가하다.
-
-::left::
-
-## 순회 패턴
-
-```cpp {}
-std::list<int> lst = {10, 20, 30, 40, 50};
-
-// 범위 기반 for — vector와 완전히 동일
-for (const auto& x : lst) {
-    std::cout << x << " ";   // 10 20 30 40 50
-}
-
-// 이터레이터 for 루프
-for (auto it = lst.begin(); it != lst.end(); ++it) {
-    std::cout << *it << " ";
-}
-
-// 역방향 순회 (rbegin / rend)
-for (auto it = lst.rbegin(); it != lst.rend(); ++it) {
-    std::cout << *it << " ";   // 50 40 30 20 10
-}
-```
-
-::right::
-
-## Random Access와의 차이
-
-```cpp {}
-std::list<int> lst = {10, 20, 30, 40, 50};
-
-auto it = lst.begin();
-++it;           // ✅ 다음으로 이동
---it;           // ✅ 이전으로 이동
-*it;            // ✅ 역참조
-
-// ❌ 임의 접근 불가
-// it += 3;     // 컴파일 오류
-// lst[2];      // 컴파일 오류
-
-// ❌ std::sort 불가 (random access iterator 필요)
-// std::sort(lst.begin(), lst.end());   // 컴파일 오류
-
-// ✅ 대신 멤버 함수 sort() 사용
-lst.sort();
-```
-
-> n번째 원소에 접근하려면 `begin()`에서 n번 `++` → **O(n)**
 
 ---
 layout: two-cols-header

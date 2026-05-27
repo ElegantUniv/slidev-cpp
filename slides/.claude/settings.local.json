@@ -27,7 +27,8 @@
       "Bash(g++ --version)",
       "Bash(/c/msys64/ucrt64/bin/g++ --version)",
       "Bash(pwd -W)",
-      "Bash(echo \"Bash /tmp = $\\(cd /tmp && pwd -W\\)\")"
+      "Bash(echo \"Bash /tmp = $\\(cd /tmp && pwd -W\\)\")",
+      "Bash(python3 *)"
     ]
   }
 }

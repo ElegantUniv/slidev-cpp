@@ -118,11 +118,11 @@ src: ./pages/stl-sequence.md
 ---
 
 ---
-src: ./pages/stl-associative.md
+src: ./pages/stl-iterators.md
 ---
 
 ---
-src: ./pages/stl-iterators.md
+src: ./pages/stl-associative.md
 ---
 
 ---
