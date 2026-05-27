@@ -492,7 +492,7 @@ std::cout << s.top();   // 20
 layout: two-cols-header
 ---
 
-# Matrix × Vector, Vector × Matrix 곱 — `operator*`
+# Matrix * Vector, Vector * Matrix 곱 — `operator*`
 
 `operator*`를 **오버로딩**해 인수 순서만으로 두 방향 곱을 모두 지원한다.
 
@@ -534,11 +534,11 @@ Vector<T, C> operator*(const Vector<T, R>&    v,
 using Mat2x3i = Matrix<int, 2, 3>;
 using Vec3i   = Vector<int, 3>;
 using Vec2i   = Vector<int, 2>;
-using Mat2x3f = Matrix<float, 2, 3>;
+using Mat3x2f = Matrix<float, 3, 2>;
 using Vec3f   = Vector<float, 3>;
 using Vec2f   = Vector<float, 2>;
 
-// ── int형 ─────────────────────────────
+// ── int형: Matrix × Vector ────────────
 Mat2x3i A;
 A(0,0)=1; A(0,1)=2; A(0,2)=3;
 A(1,0)=4; A(1,1)=5; A(1,2)=6;
@@ -546,17 +546,18 @@ A(1,0)=4; A(1,1)=5; A(1,2)=6;
 Vec3i v;
 v(0)=1; v(1)=2; v(2)=3;
 
-Vec2i r = A * v;      // r(0) = 14,  r(1) = 32
+Vec2i w = A * v;      // w(0) = 14,  w(1) = 32
 
-// ── float형 ───────────────────────────
-Mat2x3f B;
-B(0,0)=0.5f; B(0,1)=1.0f; B(0,2)=1.5f;
-B(1,0)=2.0f; B(1,1)=2.5f; B(1,2)=3.0f;
+// ── float형: Vector × Matrix ──────────
+Vec3f x;
+x(0)=1.0f; x(1)=2.0f; x(2)=3.0f;
 
-Vec3f vf;
-vf(0)=1.0f; vf(1)=2.0f; vf(2)=3.0f;
+Mat3x2f B;
+B(0,0)=1.0f; B(0,1)=2.0f;
+B(1,0)=3.0f; B(1,1)=4.0f;
+B(2,0)=5.0f; B(2,1)=6.0f;
 
-Vec2f rf = B * vf;    // rf(0) = 7.0,  rf(1) = 16.0
+Vec2f y = x * B;      // y(0) = 22.0,  y(1) = 28.0
 ```
 
 ---
@@ -581,4 +582,4 @@ layout: default
 ### 핵심 원칙
 
 - 템플릿은 **설계도** — 사용 시점에 컴파일러가 구체적인 코드를 생성한다
-- STL의 모든 컨테이너·알고리즘이 **템플릿으로 구현**됨 — 우리가 이미 사용해왔다
+- STL의 모든 컨테이너·알고리즘이 **템플릿으로 구현**됨
