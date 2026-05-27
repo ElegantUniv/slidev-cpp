@@ -15,7 +15,13 @@
       "Bash(g++ -std=c++17 -c private_bad.cpp)",
       "Bash(echo \"EXIT:$?\")",
       "Bash(g++ -std=c++17 -o private_good private_good.cpp)",
-      "Bash(Remove-Item *)"
+      "Bash(Remove-Item *)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:elegantuniv.github.io)",
+      "WebFetch(domain:app.netlify.com)",
+      "WebFetch(domain:slidev-cpp.netlify.app)",
+      "Bash(pnpm run *)",
+      "PowerShell(git *)"
     ]
   }
 }
