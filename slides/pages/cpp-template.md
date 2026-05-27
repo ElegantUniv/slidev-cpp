@@ -531,15 +531,15 @@ Vector<T, C> operator*(const Vector<T, R>&    v,
 ### `using` 별칭으로 깔끔하게
 
 ```cpp {}
-using Mat23i = Matrix<int, 2, 3>;
-using Vec3i  = Vector<int, 3>;
-using Vec2i  = Vector<int, 2>;
-using Mat23f = Matrix<float, 2, 3>;
-using Vec3f  = Vector<float, 3>;
-using Vec2f  = Vector<float, 2>;
+using Mat2x3i = Matrix<int, 2, 3>;
+using Vec3i   = Vector<int, 3>;
+using Vec2i   = Vector<int, 2>;
+using Mat2x3f = Matrix<float, 2, 3>;
+using Vec3f   = Vector<float, 3>;
+using Vec2f   = Vector<float, 2>;
 
 // ── int형 ─────────────────────────────
-Mat23i A;
+Mat2x3i A;
 A(0,0)=1; A(0,1)=2; A(0,2)=3;
 A(1,0)=4; A(1,1)=5; A(1,2)=6;
 
@@ -550,7 +550,7 @@ Vec2i r = A * v;
 // r(0) = 14,  r(1) = 32
 
 // ── float형 ───────────────────────────
-Mat23f B;
+Mat2x3f B;
 B(0,0)=0.5f; B(0,1)=1.0f; B(0,2)=1.5f;
 B(1,0)=2.0f; B(1,1)=2.5f; B(1,2)=3.0f;
 
