@@ -381,7 +381,7 @@ layout: cover
 ---
 
 # `std::list`
-## '이중 연결 리스트' 구조의 시퀀스 컨테이너
+## 이중 연결 리스트 구조의 시퀀스 컨테이너
 
 ---
 layout: two-cols-header
@@ -563,121 +563,109 @@ a.splice(a.begin(), c, from);
 > 노드 포인터만 재연결 — **복사·이동 없이 O(1)**.
 
 ---
-layout: section
+layout: cover
 ---
 
-# `std::array` / `std::deque`
+# `std::array`
+## 정적 연속 메모리 공간의 시퀀스 컨테이너 
 
 ---
-layout: two-cols-header
+layout: default
 ---
 
 # `std::array` — 고정 크기 배열
 
 컴파일 타임에 크기가 고정된 배열. C 배열과 성능은 같고, STL 인터페이스를 추가로 제공한다.
 
-::left::
-
-## 기본 사용
 
 ```cpp {}
 #include <array>
 
+//////////////////////
+// 생성과 원소 접근
+//////////////////////
 std::array<int, 5> a = {1, 2, 3, 4, 5};
 
-a[0];        // 1
-a.at(2);     // 3  (경계 검사)
-a.front();   // 1
-a.back();    // 5
-a.size();    // 5 — 항상 고정
+a[0];        // 1  — 경계 검사 없음 (빠름)       a.front();  // 1
+a.at(2);     // 3  — 경계 검사 있음 (안전)       a.back();   // 5
+a.size();    // 5  — 항상 고정                    a.empty();  // false
 
-for (const auto& x : a) {
-    std::cout << x << " ";   // 1 2 3 4 5
-}
-
-// STL 알고리즘 그대로 사용 가능
-std::sort(a.begin(), a.end());
-auto it = std::find(a.begin(), a.end(), 3);
+for (const auto& x : a) { std::cout << x << " "; }   // 1 2 3 4 5
+std::sort(a.begin(), a.end());   // STL 알고리즘 그대로 사용 가능
 ```
 
-::right::
-
-## C 배열 vs `std::array`
 
 ```cpp {}
-// C 배열 — 위험
-int c[5] = {1, 2, 3, 4, 5};
-// c[10];       // ❌ 미정의 동작
-// c.size();    // ❌ 컴파일 오류
+//////////////////////
+// 함수 파라미터로 전달
+//////////////////////
 
-// std::array — 안전
-std::array<int, 5> arr = {1, 2, 3, 4, 5};
-arr.at(10);  // ❌ std::out_of_range (안전)
-arr.size();  // 5 — 언제나 정확
+// ✅ std::array — 크기가 타입에 포함된 채로 전달
+void print(const std::array<int, 5>& a) {
+    for (const auto& x : a) std::cout << x << " ";
+}
+
+
+std::array<int, 5> a5 = {1, 2, 3, 4, 5};
+print(a5);   // ✅ array<int, 5> — 타입 일치
 ```
-
-<br>
-
-| | C 배열 | `std::array` |
-|---|---|---|
-| 크기 정보 | ❌ | `size()` ✅ |
-| 경계 검사 | ❌ | `at()` ✅ |
-| STL 알고리즘 | ❌ | ✅ |
-| 런타임 오버헤드 | 없음 | 없음 |
 
 ---
 layout: two-cols-header
 ---
 
-# `std::deque` — 양방향 큐
-
-**앞·뒤 모두 O(1)으로 삽입·삭제**할 수 있는 컨테이너. `vector`처럼 임의 접근도 가능하다.
+# `std::array` — `fill` / `swap` / `data`
 
 ::left::
 
-## 기본 사용
+## `fill` / `swap` — 일괄 조작
 
 ```cpp {}
-#include <deque>
+std::array<int, 5> a = {1, 2, 3, 4, 5};
+std::array<int, 5> b = {6, 7, 8, 9, 10};
 
-std::deque<int> dq = {10, 20, 30};
+// fill: 전체를 같은 값으로 채우기
+a.fill(0);
+// a: {0, 0, 0, 0, 0}
 
-// 앞·뒤 모두 O(1)
-dq.push_front(5);    // {5, 10, 20, 30}
-dq.push_back(40);    // {5, 10, 20, 30, 40}
+// swap: 두 배열 내용 교환 — O(N)
+a.swap(b);
+// a: {6, 7, 8, 9, 10},  b: {0, 0, 0, 0, 0}
 
-dq.pop_front();      // {10, 20, 30, 40}
-dq.pop_back();       // {10, 20, 30}
-
-dq[1];               // 20 — 임의 접근 ✅
-dq.front();          // 10
-dq.back();           // 30
+// 값 타입 — 복사·대입 가능
+std::array<int, 5> c = a;   // 복사 생성
+b = c;                       // 대입
+// (C 배열은 둘 다 불가)
 ```
 
 ::right::
 
-## `vector` vs `deque`
+## `data()` — C API 호환
 
 ```cpp {}
-// vector — 앞 삽입 O(n): 전체 원소 이동
-std::vector<int> v = {10, 20, 30};
-v.insert(v.begin(), 5);   // ❌ 느림
+std::array<int, 5> a = {1, 2, 3, 4, 5};
 
-// deque — 앞 삽입 O(1)
-std::deque<int> dq = {10, 20, 30};
-dq.push_front(5);         // ✅ 빠름
+// data(): 첫 원소의 raw 포인터 반환
+int* p = a.data();
+
+// C 스타일 함수에 그대로 전달 가능
+void legacy_print(const int* arr, int n);
+legacy_print(a.data(), a.size());
+
+// 2차원 배열
+std::array<std::array<int, 3>, 2> matrix = {{
+    {1, 2, 3},
+    {4, 5, 6}
+}};
+matrix[0][1];   // 2
+matrix[1][2];   // 6
+for (const auto& row : matrix)
+    for (int x : row)
+        std::cout << x << " ";
 ```
 
-<br>
+> `data()`로 raw 포인터를 얻을 수 있어 C 라이브러리와 **호환성**을 유지하면서 STL 인터페이스도 사용할 수 있다.
 
-| | `vector` | `deque` |
-|---|---|---|
-| 앞 삽입 | O(n) | **O(1)** ✅ |
-| 뒤 삽입 | O(1) | O(1) |
-| 임의 접근 | O(1) | O(1) |
-| 메모리 | 연속 | 청크 분산 |
-
-> `deque`를 쓰는 경우: 큐(Queue) 구현, 앞뒤 양방향 삽입이 필요할 때.
 
 ---
 layout: default
@@ -694,9 +682,6 @@ layout: default
 ├─ 끝에서만 추가·삭제하는가?                    ← 대부분의 경우
 │      → std::vector<T>                         ← 기본 선택
 │
-├─ 앞·뒤 모두 O(1) 삽입·삭제가 필요한가?
-│      → std::deque<T>
-│
 └─ 중간 삽입·삭제가 잦고, 이터레이터를 유지해야 하는가?
        → std::list<T>
          (임의 접근 없음, 캐시 효율 낮음 — 실제 성능은 측정 필요)
@@ -708,7 +693,6 @@ layout: default
 |----------|-----------|-----------|---------|-----------|-------------------|
 | `vector` | Random Access | O(1) ✅ | O(n) | O(n) | ❌ 무효화 |
 | `array` | Random Access | O(1) ✅ | — | — | — |
-| `deque` | Random Access | O(1) ✅ | O(1) ✅ | O(n) | ❌ 무효화 |
 | `list` | Bidirectional | ❌ | O(1) ✅ | O(1) ✅ | ✅ 유지 |
 
 > **결론**: 이유 없이 `vector`를 써도 거의 틀리지 않는다.

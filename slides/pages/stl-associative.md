@@ -6,18 +6,19 @@ layout: cover
 ## 연관 컨테이너 (Associative Containers)
 
 ---
-layout: section
+layout: cover
 ---
 
 # `std::set`
+## 중복을 허용하지 않는 원소(Key)들의 연관 컨테이너
 
 ---
 layout: two-cols-header
 ---
 
-# `std::set` — 정렬된 집합
+# `std::set` — 중복 없는 집합
 
-`set`은 **중복 없이 자동 정렬**되는 집합이다. 내부적으로 균형 이진 트리(Red-Black Tree)로 구현된다.
+`set`은 **중복을 허용하지 않는** 집합이다. 원소의 삽입·검색·삭제를 빠르게 수행할 수 있다.
 
 ::left::
 
@@ -28,13 +29,13 @@ layout: two-cols-header
 
 std::set<int> s;
 
-// 삽입 — 자동 정렬, 중복 무시
+// 삽입 — 중복 무시
 s.insert(30);
 s.insert(10);
 s.insert(20);
 s.insert(10);   // 중복 — 무시됨
 
-// 순회: 항상 정렬 순서
+// 순회
 for (int x : s) {
     std::cout << x << " ";  // 10 20 30
 }
@@ -71,10 +72,130 @@ s.erase(s.find(30), s.find(50));
 > `find()`는 O(log n) — `std::find()`(선형 탐색)보다 훨씬 빠르다.
 
 ---
-layout: section
+layout: two-cols-header
+---
+
+# `std::set` — 초기화와 활용 패턴
+
+::left::
+
+## 다양한 초기화
+
+```cpp {}
+// initializer list — 중복 자동 제거
+std::set<int> s1 = {5, 3, 1, 4, 2, 3, 1};
+// s1: {1, 2, 3, 4, 5}
+
+// 문자열 set
+std::set<std::string> words;
+words.insert("banana");
+words.insert("apple");
+words.insert("cherry");
+words.insert("apple");   // 중복 무시
+// words: {"apple", "banana", "cherry"}
+
+// vector → set: 중복 제거
+std::vector<int> v = {3, 1, 4, 1, 5, 9, 2, 6, 5};
+std::set<int> s2(v.begin(), v.end());
+// s2: {1, 2, 3, 4, 5, 6, 9}
+```
+
+::right::
+
+## 활용 패턴
+
+```cpp {}
+// ① 방문 여부 추적
+std::set<int> visited;
+visited.insert(3);
+visited.insert(5);
+visited.insert(3);   // 이미 방문 — 무시
+
+if (visited.count(5)) {
+    std::cout << "5는 이미 방문\n";   // ✅
+}
+
+// ② 중복 제거 후 vector로 복원
+std::vector<int> data = {3, 1, 4, 1, 5, 9, 2, 6, 5};
+std::set<int> s(data.begin(), data.end());
+std::vector<int> unique_data(s.begin(), s.end());
+// unique_data: {1, 2, 3, 4, 5, 6, 9}
+
+// ③ insert 반환값 — 삽입 성공 여부 확인
+auto [it, ok] = s1.insert(99);
+// ok == true  → 삽입됨
+// ok == false → 이미 존재
+```
+
+> `set`은 **중복 없는 원소 집합**이 필요할 때 사용한다.
+> 방문 추적, 중복 제거, 멤버십 확인에 자주 활용된다.
+
+---
+layout: cover
 ---
 
 # `std::map`
+## Key-Value 쌍의  연관 컨테이너
+
+---
+layout: two-cols-header
+---
+
+# `std::map` — 키로 값을 찾는 사전
+
+`map`은 **키(key)로 값(value)을 찾는 사전**이다. 배열이 정수 인덱스로 값을 찾듯, `map`은 **임의 타입의 키**로 값을 찾는다.
+
+::left::
+
+## 배열 vs `map`
+
+```
+vector<int>             map<string, int>
+─────────────────       ─────────────────────
+인덱스(int) → 값         키(string)  → 값
+─────────────────       ─────────────────────
+  0  →  95              "Alice"  →  95
+  1  →  88              "Bob"    →  88
+  2  →  72              "Carol"  →  72
+```
+
+```cpp {}
+// vector: 정수 인덱스만 가능
+std::vector<int> v = {95, 88, 72};
+v[0];   // 95
+
+// map: 문자열·정수·객체 등 키로 사용 가능
+std::map<std::string, int> score;
+score["Alice"] = 95;
+score["Alice"];   // 95 — 이름으로 직접 접근
+```
+
+::right::
+
+## 활용 예시
+
+```cpp {}
+// 영한 사전: 단어 → 뜻
+std::map<std::string, std::string> dict;
+dict["apple"]  = "사과";
+dict["banana"] = "바나나";
+dict["apple"];   // "사과"
+
+// 학번 → 점수
+std::map<int, double> grade;
+grade[20241001] = 4.5;
+grade[20241002] = 3.8;
+
+// 단어 빈도 카운팅
+std::map<std::string, int> freq;
+freq["hello"]++;
+freq["world"]++;
+freq["hello"]++;
+// freq["hello"] == 2
+```
+
+> - 키는 어떤 타입이든 가능 (단, `<` 비교 가능해야 함)
+> - 삽입·검색·삭제 모두 **O(log n)**
 
 ---
 layout: two-cols-header
@@ -82,7 +203,7 @@ layout: two-cols-header
 
 # `std::map` — 생성과 삽입
 
-`map`은 **키-값 쌍**을 키 순서로 정렬해 저장한다. 키는 중복될 수 없으며, 내부적으로 Red-Black Tree로 구현된다.
+`map`은 **키-값 쌍**을 저장한다. 키는 중복될 수 없으며, 빠르게 삽입·검색·삭제할 수 있다.
 
 ::left::
 
@@ -271,7 +392,7 @@ for (auto it = m.lower_bound(20);
 ```
 
 > `lower_bound` / `upper_bound` 모두 **O(log n)**.
-> 정렬된 키 범위를 빠르게 조회하는 것은 `map`의 고유 강점이다.
+> 특정 키 범위를 빠르게 조회하는 것은 `map`의 고유 강점이다.
 
 ---
 layout: two-cols-header
@@ -288,7 +409,7 @@ std::map<std::string, int> score = {
     {"Alice", 95}, {"Bob", 88}, {"Carol", 72}
 };
 
-// 이터레이터 순회 — 항상 키 오름차순
+// 이터레이터 순회
 for (auto it = score.begin(); it != score.end(); ++it) {
     std::cout << it->first           // 키
               << ": " << it->second  // 값
@@ -298,7 +419,7 @@ for (auto it = score.begin(); it != score.end(); ++it) {
 // Bob: 88
 // Carol: 72
 
-// 역방향 (키 내림차순)
+// 역방향 순회
 for (auto it = score.rbegin(); it != score.rend(); ++it) {
     std::cout << it->first << "\n";
     // Carol → Bob → Alice
@@ -329,7 +450,7 @@ for (auto& [name, s] : score) {
 }
 ```
 
-> map의 이터레이터는 **항상 키 오름차순**으로 순회된다.
+> map은 항상 **일관된 키 순서**로 순회된다.
 > C++17 구조화 바인딩으로 `it->first` / `it->second` 없이 읽기 쉽게 쓸 수 있다.
 
 ---
@@ -398,61 +519,63 @@ std::cout << max_it->first;   // "apple"
 layout: two-cols-header
 ---
 
-# `std::multiset` / `std::multimap`
+# `std::pair` — 두 값을 묶는 타입
 
-`multi-` 계열은 **중복 키를 허용**한다.
+`map`의 각 원소는 `std::pair<const Key, Value>`로 저장된다. `pair`를 이해하면 `map` 이터레이터를 자연스럽게 읽을 수 있다.
 
 ::left::
 
-## `std::multiset`
+## 기본 사용
 
 ```cpp {}
-#include <set>
+#include <utility>   // std::pair
 
-std::multiset<int> ms = {10, 20, 10, 20, 20};
-// ms: {10, 10, 20, 20, 20}
+// 선언과 초기화
+std::pair<std::string, int> p1 {"Alice", 95};
 
-for (int x : ms) {
-    std::cout << x << " ";   // 10 10 20 20 20
-}
+// make_pair — 타입 자동 추론
+auto p2 = std::make_pair("Bob", 88);
 
-ms.count(20);   // 3 — 20의 개수
+// 중괄호 초기화 (C++11)
+std::pair<std::string, int> p3 = {"Carol", 72};
 
-// 하나만 삭제 (이터레이터 사용)
-auto it = ms.find(20);
-ms.erase(it);   // 20 하나만 삭제
-// ms: {10, 10, 20, 20}
+// 멤버 접근
+p1.first;    // "Alice" — 첫 번째 값
+p1.second;   // 95      — 두 번째 값
 
-// 값으로 삭제하면 해당 값 전체 삭제
-ms.erase(10);
-// ms: {20, 20}
+// 비교 — first 기준, 같으면 second 기준
+p1 < p3;     // "Alice" < "Carol" → true
 ```
 
 ::right::
 
-## `std::multimap`
+## `map`의 원소 타입
 
 ```cpp {}
-#include <map>
+// map<K, V>의 value_type = pair<const K, V>
 
-// 같은 키에 여러 값 허용
-std::multimap<std::string, int> scores;
+std::map<std::string, int> score = {
+    {"Alice", 95}, {"Bob", 88}   // 각 원소가 pair
+};
 
-scores.insert({"Alice", 90});
-scores.insert({"Alice", 85});   // ✅ 중복 키
-scores.insert({"Bob",   88});
+// 이터레이터 → pair를 가리킴
+auto it = score.begin();
+it->first;    // "Alice" — 키 (const, 수정 불가)
+it->second;   // 95      — 값
 
-// ⚠️ multimap은 [] 연산자 없음
-// scores["Alice"] = 95;   // ❌ 컴파일 오류
+// insert에 pair 전달
+score.insert(std::make_pair("Dave", 85));
+score.insert({"Eve", 79});   // 중괄호 초기화도 가능
 
-// 특정 키의 모든 값 조회: equal_range
-auto [lo, hi] = scores.equal_range("Alice");
-for (auto it = lo; it != hi; ++it) {
-    std::cout << it->second << " ";   // 90 85
+// range-based for: pair로 받기
+for (const auto& p : score) {
+    std::cout << p.first << ": " << p.second << "\n";
 }
-
-scores.count("Alice");   // 2
+// → C++17 구조화 바인딩으로 더 간결하게 사용 가능
 ```
+
+> `map` 이터레이터의 `->first` / `->second`는
+> `pair<const Key, Value>`의 두 멤버다.
 
 ---
 layout: default
@@ -460,12 +583,10 @@ layout: default
 
 # 연관 컨테이너 비교
 
-| 컨테이너 | 중복 키 | 키 정렬 | `[]` | 헤더 | 주 용도 |
-|----------|---------|---------|------|------|---------|
-| `set<T>` | ❌ | ✅ | ❌ | `<set>` | 중복 없는 집합, 존재 여부 확인 |
-| `multiset<T>` | ✅ | ✅ | ❌ | `<set>` | 중복 포함 정렬 집합 |
-| `map<K,V>` | ❌ | ✅ | ✅ | `<map>` | 키-값 저장, 빠른 검색 |
-| `multimap<K,V>` | ✅ | ✅ | ❌ | `<map>` | 키당 여러 값 |
+| 컨테이너 | 중복 키 | `[]` | 헤더 | 주 용도 |
+|----------|---------|------|------|---------|
+| `set<T>` | ❌ | ❌ | `<set>` | 중복 없는 집합, 존재 여부 확인 |
+| `map<K,V>` | ❌ | ✅ | `<map>` | 키-값 저장, 빠른 검색 |
 
 <br>
 
@@ -475,14 +596,11 @@ layout: default
 ├─ 중복 없는 집합이 필요한가?
 │      → set<T>   (예: 방문한 노드 추적, 단어 사전)
 │
-├─ 키-값 쌍을 저장해야 하는가?
-│      → map<K,V>  (예: 이름→점수, 단어 빈도 카운팅)
-│
-└─ 중복 키가 필요한가?
-       → multiset<T>  /  multimap<K,V>
+└─ 키-값 쌍을 저장해야 하는가?
+       → map<K,V>  (예: 이름→점수, 단어 빈도 카운팅)
 ```
 
 <br>
 
-> 모든 연관 컨테이너는 삽입·검색·삭제가 **O(log n)** — 내부 트리 구조.
+> 모든 연관 컨테이너는 삽입·검색·삭제가 **O(log n)**이다.
 > 순서가 필요 없고 O(1) 검색이 중요하다면 `unordered_map` / `unordered_set`을 고려한다.
