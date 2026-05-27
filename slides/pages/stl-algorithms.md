@@ -40,6 +40,121 @@ l.sort();                              // ✅ list 전용 멤버 함수
 layout: two-cols-header
 ---
 
+# 커스텀 함수 객체 (Functor)
+
+`operator()`를 정의한 클래스를 **함수 객체(functor)**라 한다. 인스턴스를 만들어 함수처럼 호출하거나, STL 알고리즘에 직접 전달할 수 있다.
+
+::left::
+
+## Functor 정의
+
+```cpp {}
+// 상태 없는 functor
+struct IsEven {
+    bool operator()(int x) const { return x % 2 == 0; }
+};
+
+// 생성자로 상태를 주입하는 functor
+struct GreaterThan {
+    int threshold;
+    GreaterThan(int t) : threshold(t) {}
+    bool operator()(int x) const { return x > threshold; }
+};
+```
+
+::right::
+
+## 인스턴스 생성과 활용
+
+```cpp {}
+std::vector<int> v = {1, 2, 3, 4, 5, 6};
+
+// ① 인스턴스 생성 후 직접 호출
+IsEven isEven;
+isEven(4);   // true  — 일반 함수처럼 호출
+isEven(3);   // false
+
+// ② 인스턴스를 변수에 담아 알고리즘에 전달
+auto cnt = std::count_if(v.begin(), v.end(), isEven);
+// cnt == 3
+
+// ③ 상태를 주입한 인스턴스 생성 후 전달
+GreaterThan gt3(3);   // threshold = 3
+gt3(5);   // true
+gt3(2);   // false
+
+auto it = std::find_if(v.begin(), v.end(), gt3);
+// *it == 4
+
+// ④ 임시 객체로 바로 전달 (①②③ 축약)
+std::count_if(v.begin(), v.end(), IsEven{});
+std::find_if(v.begin(), v.end(), GreaterThan{3});
+```
+
+---
+layout: two-cols-header
+---
+
+# 표준 라이브러리 Functor (`<functional>`)
+
+`<functional>` 헤더는 자주 쓰는 연산을 functor로 미리 정의해 제공한다. 직접 만들 필요 없이 알고리즘에 바로 전달할 수 있다.
+
+::left::
+
+## 알고리즘에 활용
+
+```cpp {}
+#include <functional>
+
+std::vector<int> v = {3, 1, 4, 1, 5, 9, 2, 6};
+
+// std::greater<T>: 내림차순 정렬
+std::sort(v.begin(), v.end(), std::greater<int>());
+// v: {9, 6, 5, 4, 3, 2, 1, 1}
+
+// std::plus<T>: accumulate 덧셈
+int sum = std::accumulate(v.begin(), v.end(), 0,
+                          std::plus<int>());
+// sum == 31
+
+// std::negate<T>: 부호 반전
+std::vector<int> neg(v.size());
+std::transform(v.begin(), v.end(),
+               neg.begin(), std::negate<int>());
+// neg: {-9, -6, -5, -4, -3, -2, -1, -1}
+```
+
+::right::
+
+## 표준 Functor 목록
+
+**비교**
+
+| Functor | 동작 |
+|---------|------|
+| `std::greater<T>` | `a > b` — 내림차순 |
+| `std::less<T>` | `a < b` — 오름차순 (기본) |
+
+**산술 / 논리**
+
+| Functor | 동작 |
+|---------|------|
+| `std::plus<T>` | `a + b` |
+| `std::minus<T>` | `a - b` |
+| `std::multiplies<T>` | `a * b` |
+| `std::negate<T>` | `-a` |
+| `std::logical_not<T>` | `!a` |
+
+<br>
+
+> 람다 `[](int x){ return x % 2 == 0; }`는
+> 컴파일러가 내부적으로 **functor 클래스를 자동 생성**한 것이다.
+> 이름이 필요하거나 여러 곳에서 재사용할 때는 functor가 유리하다.
+
+---
+layout: two-cols-header
+---
+
 # 람다 — 문법과 알고리즘 활용
 
 STL 알고리즘은 **동작을 인자로 받는다**. 람다는 그 동작을 코드 안에서 바로 정의하는 **이름 없는 함수**다.
@@ -370,6 +485,131 @@ std::generate(dst.begin(), dst.end(),
               [&n]{ return n++; });
 // dst: {0, 1, 2, 3, 4}
 ```
+
+---
+layout: two-cols-header
+---
+
+# `remove` / `unique` — 제거와 중복 처리
+
+::left::
+
+## `remove` / `remove_if` — erase-remove 패턴
+
+```cpp {}
+// ⚠️ std::remove는 실제로 삭제하지 않는다!
+// 제거 대상을 뒤로 밀고, 유효 범위의 끝을 반환한다.
+
+std::vector<int> v = {1, 2, 3, 2, 4, 2, 5};
+
+auto new_end = std::remove(v.begin(), v.end(), 2);
+// v: {1, 3, 4, 5, ?, ?, ?}  ← ? 는 쓰레기값
+// new_end → 유효 원소 다음을 가리킴
+
+// erase로 실제 삭제 — erase-remove 관용구
+v.erase(new_end, v.end());
+// v: {1, 3, 4, 5}
+
+// 한 줄로 (관용구 형태)
+v.erase(std::remove(v.begin(), v.end(), 2), v.end());
+
+// remove_if: 조건으로 제거
+v.erase(
+    std::remove_if(v.begin(), v.end(),
+        [](int x){ return x % 2 == 0; }),
+    v.end());
+// v: {1, 3, 5}  (짝수 모두 제거)
+```
+
+::right::
+
+## `unique` — 연속 중복 제거
+
+```cpp {}
+// ⚠️ unique도 실제로 삭제하지 않는다.
+// 연속된 중복을 뒤로 밀고 유효 범위의 끝을 반환한다.
+
+// 연속된 중복만 제거 (정렬 없이)
+std::vector<int> v1 = {1, 1, 2, 3, 3, 3, 4};
+v1.erase(std::unique(v1.begin(), v1.end()), v1.end());
+// v1: {1, 2, 3, 4}
+
+// 모든 중복 제거: sort 후 unique
+std::vector<int> v2 = {3, 1, 4, 1, 5, 9, 2, 6, 5};
+std::sort(v2.begin(), v2.end());
+// v2: {1, 1, 2, 3, 4, 5, 5, 6, 9}
+v2.erase(std::unique(v2.begin(), v2.end()), v2.end());
+// v2: {1, 2, 3, 4, 5, 6, 9}
+```
+
+<br>
+
+> `remove` / `unique`는 **원소를 물리적으로 삭제하지 않는다**.
+> 반드시 `erase`와 짝지어 사용해야 컨테이너 크기가 줄어든다.
+
+---
+layout: two-cols-header
+---
+
+# `for_each` / `reverse` / `binary_search`
+
+::left::
+
+## `for_each` — 각 원소에 동작 적용
+
+```cpp {}
+std::vector<int> v = {1, 2, 3, 4, 5};
+
+// 읽기 — 각 원소 출력
+std::for_each(v.begin(), v.end(),
+    [](int x){ std::cout << x << " "; });
+// 1 2 3 4 5
+
+// 쓰기 — 참조로 캡처해 원본 수정
+std::for_each(v.begin(), v.end(),
+    [](int& x){ x *= 2; });
+// v: {2, 4, 6, 8, 10}
+```
+
+## `reverse` — 순서 뒤집기
+
+```cpp {}
+std::vector<int> v = {1, 2, 3, 4, 5};
+std::reverse(v.begin(), v.end());
+// v: {5, 4, 3, 2, 1}
+
+std::string s = "hello";
+std::reverse(s.begin(), s.end());
+// s: "olleh"
+```
+
+::right::
+
+## `binary_search` / `lower_bound` — 정렬된 범위 검색
+
+```cpp {}
+std::vector<int> v = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+// ⚠️ 반드시 정렬된 상태여야 한다
+
+// binary_search: 존재 여부 확인 — bool 반환
+std::binary_search(v.begin(), v.end(), 5);  // true
+std::binary_search(v.begin(), v.end(), 99); // false
+
+// lower_bound: key 이상인 첫 이터레이터
+auto lb = std::lower_bound(v.begin(), v.end(), 5);
+// *lb == 5
+
+// upper_bound: key 초과인 첫 이터레이터
+auto ub = std::upper_bound(v.begin(), v.end(), 5);
+// *ub == 6
+
+// 값이 없을 때 — end() 반환
+auto it = std::lower_bound(v.begin(), v.end(), 99);
+if (it == v.end()) std::cout << "없음\n";
+```
+
+> `binary_search` / `lower_bound` / `upper_bound`는
+> **정렬된 범위**에서만 올바르게 동작한다. O(log n).
 
 ---
 layout: two-cols-header
