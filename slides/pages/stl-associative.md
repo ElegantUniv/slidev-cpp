@@ -149,7 +149,7 @@ layout: two-cols-header
 
 ## 배열 vs `map`
 
-```
+```txt {}
 vector<int>             map<string, int>
 ─────────────────       ─────────────────────
 인덱스(int) → 값         키(string)  → 값
@@ -207,7 +207,7 @@ layout: two-cols-header
 
 ::left::
 
-## 생성
+### 생성
 
 ```cpp {}
 #include <map>
@@ -223,7 +223,7 @@ std::map<std::string, int> score = {
 };
 ```
 
-## `insert` — 명시적 삽입
+### `insert` — 명시적 삽입
 
 ```cpp {}
 std::map<std::string, int> m;
@@ -238,7 +238,7 @@ auto [it, ok] = m.insert({"Dave", 99});  // C++17
 
 ::right::
 
-## `emplace` / `try_emplace` / `insert_or_assign`
+### `emplace`/`try_emplace`/`insert_or_assign`
 
 ```cpp {}
 std::map<std::string, int> m;
@@ -271,7 +271,7 @@ layout: two-cols-header
 
 ::left::
 
-## `[]`로 삽입·갱신
+### `[]`로 삽입·갱신
 
 ```cpp {}
 std::map<std::string, int> m;
@@ -289,7 +289,7 @@ m["Alice"] = 100;
 
 <br>
 
-## ⚠️ 없는 키에 접근하면 자동 삽입!
+### ⚠️ 없는 키에 접근하면 자동 삽입!
 
 ```cpp {}
 std::map<std::string, int> m;
@@ -306,7 +306,7 @@ const auto& cm = m;
 
 ::right::
 
-## ✅ 안전한 읽기: `at()` / `find()`
+### ✅ 안전한 읽기: `at()` / `find()`
 
 ```cpp {}
 std::map<std::string, int> m = {
@@ -521,11 +521,11 @@ layout: two-cols-header
 
 # `std::pair` — 두 값을 묶는 타입
 
-`map`의 각 원소는 `std::pair<const Key, Value>`로 저장된다. `pair`를 이해하면 `map` 이터레이터를 자연스럽게 읽을 수 있다.
+`map`의 각 원소는 `std::pair<const Key, Value>`로 저장됨. `pair`를 이해하면 `map` 이터레이터를 자연스럽게 읽을 수 있음.
 
 ::left::
 
-## 기본 사용
+### 기본 사용
 
 ```cpp {}
 #include <utility>   // std::pair
@@ -549,7 +549,7 @@ p1 < p3;     // "Alice" < "Carol" → true
 
 ::right::
 
-## `map`의 원소 타입
+### `map`의 원소 타입
 
 ```cpp {}
 // map<K, V>의 value_type = pair<const K, V>

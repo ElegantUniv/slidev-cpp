@@ -115,11 +115,11 @@ layout: two-cols-header
 
 # `end()` — 이터레이터의 `nullptr`
 
-포인터에서 "유효하지 않음"을 `nullptr`로 표현하듯, 이터레이터에서 **"원소가 없음 / 범위의 끝"**을 `end()`로 표현한다.
+포인터에서 "유효하지 않음"을 `nullptr`로 표현하듯, 이터레이터에서 "원소가 없음 / 범위의 끝"을 `end()`로 표현함.
 
 ::left::
 
-## 포인터의 `nullptr` vs 이터레이터의 `end()`
+### 포인터의 `nullptr` vs 이터레이터의 `end()`
 
 ```cpp {}
 // ── 포인터 패턴 ──────────────────────────────────
@@ -151,7 +151,7 @@ if (it != v.end()) {          // end() == nullptr 역할
 
 ::right::
 
-## `end()` 반환 패턴 — vector / list
+### `end()` 반환 패턴 — vector / list
 
 ```cpp {}
 std::vector<int> v = {10, 20, 30};
@@ -176,7 +176,6 @@ auto it4 = std::find_if(lst.begin(), lst.end(),
 if (it4 == lst.end()) std::cout << "조건 불만족\n";
 ```
 
-<br>
 
 > ⚠️ `end()`를 역참조하면 **미정의 동작(크래시)**.
 > 이터레이터는 반드시 **`!= end()` 확인 후** 역참조한다.
@@ -197,8 +196,6 @@ layout: default
 | **Random Access** | Bidirectional + `+n`, `-n`, `[]`, `<` | `vector`, `array`, `deque` |
 | **Output** | `*`, `++` (쓰기 전용) | `ostream_iterator` |
 
-<br>
-
 ```cpp {}
 std::vector<int> v = {1, 2, 3, 4, 5};
 
@@ -213,7 +210,7 @@ auto it2 = lst.begin();     // bidirectional iterator
 // it2 += 3;   // ❌ list는 random access 불가
 ```
 
-> `std::sort()` 같은 알고리즘은 **random access iterator**를 요구한다.
+> `std::sort()` 같은 알고리즘은 **random access iterator**를 요구한다. <br>
 > `list`를 `std::sort()`에 넘기면 컴파일 오류가 난다 — `list::sort()` 멤버를 사용한다.
 
 ---
@@ -286,9 +283,17 @@ layout: two-cols-header
 
 # `const_iterator` / `reverse_iterator`
 
+| 함수 | 반환 타입 | 방향 | 수정 |
+|------|-----------|------|------|
+| `begin()` / `end()` | `iterator` | 정방향 | ✅ |
+| `cbegin()` / `cend()` | `const_iterator` | 정방향 | ❌ |
+| `rbegin()` / `rend()` | `reverse_iterator` | 역방향 | ✅ |
+| `crbegin()` / `crend()` | `const_reverse_iterator` | 역방향 | ❌ |
+
+
 ::left::
 
-## `const_iterator` — 읽기 전용
+### `const_iterator` — 읽기 전용
 
 ```cpp {}
 std::vector<int> v = {10, 20, 30};
@@ -312,7 +317,7 @@ for (auto it = cv.begin(); it != cv.end(); ++it) {
 
 ::right::
 
-## `reverse_iterator` — 역방향 순회
+### `reverse_iterator` — 역방향 순회
 
 ```cpp {}
 std::vector<int> v = {10, 20, 30, 40, 50};
@@ -331,11 +336,4 @@ for (auto it = lst.rbegin(); it != lst.rend(); ++it) {
 }
 ```
 
-<br>
 
-| 함수 | 반환 타입 | 방향 | 수정 |
-|------|-----------|------|------|
-| `begin()` / `end()` | `iterator` | 정방향 | ✅ |
-| `cbegin()` / `cend()` | `const_iterator` | 정방향 | ❌ |
-| `rbegin()` / `rend()` | `reverse_iterator` | 역방향 | ✅ |
-| `crbegin()` / `crend()` | `const_reverse_iterator` | 역방향 | ❌ |

@@ -97,11 +97,11 @@ layout: two-cols-header
 
 # 표준 라이브러리 Functor (`<functional>`)
 
-`<functional>` 헤더는 자주 쓰는 연산을 functor로 미리 정의해 제공한다. 직접 만들 필요 없이 알고리즘에 바로 전달할 수 있다.
+`<functional>` 헤더는 자주 쓰는 연산을 functor로 미리 정의해 제공. 직접 만들 필요 없이 알고리즘에 바로 전달 가능.
 
 ::left::
 
-## 알고리즘에 활용
+### 알고리즘에 활용
 
 ```cpp {}
 #include <functional>
@@ -123,19 +123,24 @@ std::transform(v.begin(), v.end(),
                neg.begin(), std::negate<int>());
 // neg: {-9, -6, -5, -4, -3, -2, -1, -1}
 ```
+<br>
+
+> 람다 `[](int x){ return x % 2 == 0; }`는
+> 컴파일러가 내부적으로 **functor 클래스를 자동 생성**한 것이다.
+> 이름이 필요하거나 여러 곳에서 재사용할 때는 functor가 유리하다.
 
 ::right::
 
-## 표준 Functor 목록
+### 표준 Functor 목록
 
-**비교**
+#### **비교**
 
 | Functor | 동작 |
 |---------|------|
 | `std::greater<T>` | `a > b` — 내림차순 |
 | `std::less<T>` | `a < b` — 오름차순 (기본) |
 
-**산술 / 논리**
+#### **산술 / 논리**
 
 | Functor | 동작 |
 |---------|------|
@@ -145,11 +150,6 @@ std::transform(v.begin(), v.end(),
 | `std::negate<T>` | `-a` |
 | `std::logical_not<T>` | `!a` |
 
-<br>
-
-> 람다 `[](int x){ return x % 2 == 0; }`는
-> 컴파일러가 내부적으로 **functor 클래스를 자동 생성**한 것이다.
-> 이름이 필요하거나 여러 곳에서 재사용할 때는 functor가 유리하다.
 
 ---
 layout: two-cols-header
@@ -161,29 +161,25 @@ STL 알고리즘은 **동작을 인자로 받는다**. 람다는 그 동작을 �
 
 ::left::
 
-## 기본 문법
+### 기본 문법
 
-```
+```txt {}
 [캡처](매개변수) -> 반환타입 { 본문 }
   ↑       ↑           ↑        ↑
 외부변수  함수인자   생략가능  실행코드
 ```
 
 ```cpp {}
-// 캡처 없음, 반환 타입 자동 추론
-[](int x){ return x * 2; }
+[](int x){ return x * 2; }          // 캡처 없음, 반환 타입 자동 추론
 
-// 매개변수 두 개 — sort의 비교 함수
-[](int a, int b){ return a > b; }
+[](int a, int b){ return a > b; }   // 매개변수 두 개 — sort의 비교 함수
 
-// 반환 타입 명시
-[](int x) -> bool { return x > 0; }
+[](int x) -> bool { return x > 0; } // 반환 타입 명시
 
-// 매개변수 없음 — generate용
-[]{ return 42; }
+[]{ return 42; }                    // 매개변수 없음 — generate용
 ```
 
-## 알고리즘별 람다 형태
+### 알고리즘별 람다 형태
 
 ```cpp {}
 // 단항 조건 (T) → bool    find_if, count_if, copy_if
@@ -201,7 +197,7 @@ STL 알고리즘은 **동작을 인자로 받는다**. 람다는 그 동작을 �
 
 ::right::
 
-## 알고리즘에 바로 전달
+### 알고리즘에 바로 전달
 
 ```cpp {}
 std::vector<int> v = {3, 1, 4, 1, 5, 9};
@@ -238,7 +234,7 @@ layout: two-cols-header
 
 ::left::
 
-## 값 캡처 `[변수]` — 복사본 사용
+### 값 캡처 `[변수]` — 복사본 사용
 
 ```cpp {}
 int threshold = 30;
@@ -253,7 +249,7 @@ threshold = 100;   // 나중에 바꿔도 람다에 영향 없음
 // 람다는 캡처 시점(생성 시)의 30을 기억
 ```
 
-## 참조 캡처 `[&변수]` — 원본에 직접 접근
+### 참조 캡처 `[&변수]` — 원본에 직접 접근
 
 ```cpp {}
 int cnt = 0;
@@ -267,7 +263,7 @@ std::for_each(v.begin(), v.end(),
 
 ::right::
 
-## 캡처 방식 정리
+### 캡처 방식 정리
 
 ```cpp {}
 int a = 1, b = 2;
@@ -303,7 +299,7 @@ layout: two-cols-header
 
 ::left::
 
-## `find` / `find_if`
+### `find` / `find_if`
 
 ```cpp {}
 std::vector<int> v = {10, 20, 30, 40, 50};
@@ -328,7 +324,7 @@ auto it3 = std::find_if_not(v.begin(), v.end(),
 
 ::right::
 
-## `count` / `count_if` / `any_of` / `all_of`
+### `count` / `count_if` / `any_of` / `all_of`
 
 ```cpp {}
 std::vector<int> v = {1, 3, 5, 2, 4, 3, 3};
@@ -361,7 +357,7 @@ layout: two-cols-header
 
 ::left::
 
-## `sort` / `stable_sort`
+### `sort` / `stable_sort`
 
 ```cpp {}
 std::vector<int> v = {3, 1, 4, 1, 5, 9, 2, 6};
@@ -390,7 +386,7 @@ std::stable_sort(students.begin(), students.end(),
 
 ::right::
 
-## `partial_sort` / `nth_element`
+### `partial_sort` / `nth_element`
 
 ```cpp {}
 std::vector<int> v = {3, 1, 4, 1, 5, 9, 2, 6};
@@ -408,7 +404,7 @@ std::nth_element(v2.begin(), v2.begin() + 3, v2.end());
 
 <br>
 
-## `is_sorted` 확인
+### `is_sorted` 확인
 
 ```cpp {}
 std::vector<int> a = {1, 2, 3, 4, 5};
@@ -426,7 +422,7 @@ layout: two-cols-header
 
 ::left::
 
-## `transform`
+### `transform`
 
 ```cpp {}
 #include <algorithm>
@@ -458,7 +454,7 @@ std::transform(a.begin(), a.end(),
 
 ::right::
 
-## `copy` / `copy_if` / `fill` / `generate`
+### `copy` / `copy_if` / `fill` / `generate`
 
 ```cpp {}
 std::vector<int> src = {1, 2, 3, 4, 5};
@@ -494,7 +490,7 @@ layout: two-cols-header
 
 ::left::
 
-## `remove` / `remove_if` — erase-remove 패턴
+### `remove`/`remove_if` — erase-remove 패턴
 
 ```cpp {}
 // ⚠️ std::remove는 실제로 삭제하지 않는다!
@@ -523,7 +519,7 @@ v.erase(
 
 ::right::
 
-## `unique` — 연속 중복 제거
+### `unique` — 연속 중복 제거
 
 ```cpp {}
 // ⚠️ unique도 실제로 삭제하지 않는다.
@@ -555,7 +551,7 @@ layout: two-cols-header
 
 ::left::
 
-## `for_each` — 각 원소에 동작 적용
+### `for_each` — 각 원소에 동작 적용
 
 ```cpp {}
 std::vector<int> v = {1, 2, 3, 4, 5};
@@ -571,7 +567,7 @@ std::for_each(v.begin(), v.end(),
 // v: {2, 4, 6, 8, 10}
 ```
 
-## `reverse` — 순서 뒤집기
+### `reverse` — 순서 뒤집기
 
 ```cpp {}
 std::vector<int> v = {1, 2, 3, 4, 5};
@@ -585,7 +581,7 @@ std::reverse(s.begin(), s.end());
 
 ::right::
 
-## `binary_search` / `lower_bound` — 정렬된 범위 검색
+### `binary_search` / `lower_bound` — 정렬된 범위 검색
 
 ```cpp {}
 std::vector<int> v = {1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -619,7 +615,7 @@ layout: two-cols-header
 
 ::left::
 
-## `accumulate`
+### `accumulate`
 
 ```cpp {}
 #include <numeric>
@@ -644,7 +640,7 @@ std::string sentence = std::accumulate(
 
 ::right::
 
-## `max_element` / `min_element` / `minmax_element`
+### `max_element`/`min_element`/`minmax_element`
 
 ```cpp {}
 std::vector<int> v = {3, 1, 4, 1, 5, 9, 2, 6};
@@ -665,7 +661,7 @@ std::cout << *lo << ", " << *hi;   // 1, 9
 
 <br>
 
-## `iota` — 순차 값 채우기
+### `iota` — 순차 값 채우기
 
 ```cpp {}
 #include <numeric>

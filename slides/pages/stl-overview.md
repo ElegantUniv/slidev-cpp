@@ -22,10 +22,8 @@ layout: default
 
 int main() {
     std::vector<int> scores = {85, 92, 78, 95, 88};
-
     // 정렬 — 직접 구현 불필요
-    std::sort(scores.begin(), scores.end());
-    // scores: {78, 85, 88, 92, 95}
+    std::sort(scores.begin(), scores.end());    // scores: {78, 85, 88, 92, 95}
 
     // 키-값 저장
     std::map<std::string, int> student;
@@ -35,14 +33,13 @@ int main() {
 }
 ```
 
-<br>
-
 | 특성 | 내용 |
 |------|------|
 | **범용성** | 템플릿 기반 — 어떤 타입이든 동일한 인터페이스 |
 | **표준 탑재** | 모든 C++ 컴파일러에 기본 포함 |
 | **검증된 구현** | 최적화·안전성이 보장된 코드 |
 | **재사용성** | 자료구조·알고리즘을 직접 구현할 필요 없음 |
+
 
 ---
 layout: two-cols-header
@@ -64,7 +61,8 @@ std::map<std::string, int> m;     // 키-값 저장소
 m["one"] = 1;
 ```
 
-<br>
+::right::
+
 
 ## 이터레이터 (Iterators)
 컨테이너를 **순회**하는 범용 포인터
@@ -78,7 +76,17 @@ auto it = v.begin();   // 첫 원소를 가리킴
 *it;                   // 20
 ```
 
-::right::
+
+
+---
+layout: two-cols-header
+---
+
+# STL의 4대 구성 요소
+
+**컨테이너 → 이터레이터 → 알고리즘** 순서로 연계해 동작한다.
+
+::left::
 
 ## 알고리즘 (Algorithms)
 이터레이터 범위에 **연산**을 적용
@@ -99,7 +107,7 @@ int sum = std::accumulate(v.begin(), v.end(), 0);
 // sum == 14
 ```
 
-<br>
+::right::
 
 ## 함수 객체 / 람다 (Functors / Lambdas)
 알고리즘에 **동작을 주입**하는 방식
@@ -112,6 +120,8 @@ std::sort(v.begin(), v.end(), std::greater<int>());
 auto it2 = std::find_if(v.begin(), v.end(),
     [](int x){ return x > 3; });
 ```
+
+
 
 ---
 layout: default
